@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+:global(body) {
+  color: #fff;
+  background-color: #000;
+  font-family: "Geist", sans;
+}
+#pageTitle {
+  font-weight: 600;
+  font-size: 5vw;
+  margin-bottom: 2vh;
+  line-height: 0;
+  margin-top: 5vh;
+}
+#pageSubtitle {
+  font-weight: 500;
+  font-size: 2vw;
+  margin-top: 4vh;
+}
+.goodDiv {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+@media (max-width: 768px) { /* Target devices with screen widths 768px or smaller */
+  #pageTitle {
+    font-size: 11vw; /* Adjusted font size for mobile */
+  }
+  #pageSubtitle {
+    font-size: 4.2vw;
+  }
+}
+
