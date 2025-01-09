@@ -5,9 +5,13 @@ let innerWidth = $state(0);
 let onPC = $derived(innerWidth > 768);
 let titleVisible = $state(false);
 let subtitleVisible = $state(false);
-let card1Visible = $state(false);
-let card2Visible = $state(false);
-let card3Visible = $state(false);
+let cards: boolean [] = $state([]);
+cards.push(false);
+cards.push(false);
+cards.push(false);
+cards.push(false);
+cards.push(false);
+cards.push(false);
 onMount(() => {
   setTimeout(() => {
     titleVisible = true;
@@ -15,46 +19,12 @@ onMount(() => {
   setTimeout(() => {
     subtitleVisible = true;
   }, 1500 );
-  setTimeout(() => {
-    card1Visible = true;
-  }, 2500 );
-  setTimeout(() => {
-    card2Visible = true;
-  }, 3500 );
-  setTimeout(() => {
-    card3Visible = true;
-  }, 4500);
+  for (let i = 0; i < cards.length; i++) {
+    setTimeout(() => {
+    cards[i] = true;
+    }, 1500 + (i + 1) * 500);
+  }
 });
-function goToRegression() {
-  titleVisible = false;
-  subtitleVisible = false;
-  card1Visible = false;
-  card2Visible = false;
-  card3Visible = false;
-  setTimeout(() => {
-    goto('/regression');
-  }, 1000);
-}
-function goToClassification() {
-  titleVisible = false;
-  subtitleVisible = false;
-  card1Visible = false;
-  card2Visible = false;
-  card3Visible = false;
-  setTimeout(() => {
-    goto('/classification');
-  }, 1000);
-}
-function goToClustering() {
-  titleVisible = false;
-  subtitleVisible = false;
-  card1Visible = false;
-  card2Visible = false;
-  card3Visible = false;
-  setTimeout(() => {
-    goto('/clustering');
-  }, 1000);
-}
 </script>
 <svelte:window bind:innerWidth />
 <div class="goodDiv">
@@ -62,8 +32,8 @@ function goToClustering() {
   <p id="pageSubtitle" class:fade-in={subtitleVisible} class:hidden={!subtitleVisible}>Choose a problem to visualize</p>
 </div>
 <div class="allCardContainer">
-  <div class="card-container" onclick={goToRegression} role="link">
-    <div class="card" class:fade-in={card1Visible} class:hidden={!card1Visible}>
+  <div class="card-container">
+    <div class="card" class:fade-in={cards[0]} class:hidden={!cards[0]}>
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
           <!-- Vertical gridlines -->
@@ -105,11 +75,11 @@ function goToClustering() {
         <path d="M0,125 Q25,50 50,10 T100,125 T150,240 T190,125" 
           stroke="#eb4034" fill="none" stroke-width="2" />
       </svg>
-      <p class="card-text">Regression</p>
+      <p class="card-text">Sine Function</p>
     </div>
   </div>
   <div class="card-container">
-    <div class="card" class:fade-in={card2Visible} class:hidden={!card2Visible} onclick={goToClassification}>
+    <div class="card" class:fade-in={cards[1]} class:hidden={!cards[1]}> 
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
           <!-- Vertical gridlines -->
@@ -140,29 +110,26 @@ function goToClustering() {
         <line x1="0" y1="250" x2="250" y2="250" stroke="white" stroke-width="2" /> <!-- X-axis -->
         <line x1="0" y1="0" x2="0" y2="250" stroke="white" stroke-width="2" /> <!-- Y-axis -->
 
-        <!-- Blue Points -->
-        <circle cx="10" cy="30" r="4" fill="#3477eb" />
-        <circle cx="30" cy="50" r="4" fill="#3477eb" />
-        <circle cx="50" cy="20" r="4" fill="#3477eb" />
-        <circle cx="70" cy="40" r="4" fill="#3477eb" />
-        <circle cx="90" cy="60" r="4" fill="#3477eb" />
-        <circle cx="110" cy="30" r="4" fill="#3477eb" />
-        <circle cx="130" cy="50" r="4" fill="#3477eb" />
-        <circle cx="150" cy="20" r="4" fill="#3477eb" />
+        <!-- Sine Graph Points -->
+        <circle cx="0" cy="10" r="4" fill="#3477eb" />
+        <circle cx="47.5" cy="150" r="4" fill="#3477eb" />
+        <circle cx="100" cy="250" r="4" fill="#3477eb" />
+        <circle cx="162.5" cy="150" r="4" fill="#3477eb" />
+        <circle cx="200" cy="10" r="4" fill="#3477eb" />
 
-
-        <circle cx="50" cy="140" r="4" fill="#eb4034" />
-        <circle cx="70" cy="120" r="4" fill="#eb4034" />
-        <circle cx="90" cy="160" r="4" fill="#eb4034" />
-        <circle cx="110" cy="130" r="4" fill="#eb4034" />
-        <circle cx="130" cy="170" r="4" fill="#eb4034" />
+  <!-- Parabola Fit -->
+  <path 
+    d="M0,0 Q100,500, 200,0" 
+    stroke="#eb4034" 
+    fill="none" 
+    stroke-width="2" />
       </svg>
-      <p class="card-text">Classification</p>
+      <p class="card-text">Parabola</p>
     </div>
   </div>
 
   <div class="card-container">
-    <div class="card" class:fade-in={card3Visible} class:hidden={!card3Visible} onclick={goToClustering}>
+    <div class="card" class:fade-in={cards[2]} class:hidden={!cards[2]}>
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
           <!-- Vertical gridlines -->
@@ -220,7 +187,111 @@ function goToClustering() {
         <circle cx="145" cy="220" r="4" fill="#eb4034" />
         <circle cx="130" cy="240" r="4" fill="#eb4034" />
       </svg>
-      <p class="card-text">Clustering</p>
+      <p class="card-text">2</p>
+    </div>
+  </div>
+  <div class="card-container">
+    <div class="card" class:fade-in={cards[3]} class:hidden={!cards[3]}> 
+      <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="lightgrey" stroke-width="0.5">
+          <!-- Vertical gridlines -->
+          <line x1="25" y1="0" x2="25" y2="250" />
+          <line x1="50" y1="0" x2="50" y2="250" />
+          <line x1="75" y1="0" x2="75" y2="250" />
+          <line x1="100" y1="0" x2="100" y2="250" />
+          <line x1="125" y1="0" x2="125" y2="250" />
+          <line x1="150" y1="0" x2="150" y2="250" />
+          <line x1="175" y1="0" x2="175" y2="250" />
+          <line x1="200" y1="0" x2="200" y2="250" />
+          <line x1="225" y1="0" x2="225" y2="250" />
+
+          <!-- Horizontal gridlines -->
+          <line x1="0" y1="1" x2="250" y2="1" />
+          <line x1="0" y1="25" x2="250" y2="25" />
+          <line x1="0" y1="50" x2="250" y2="50" />
+          <line x1="0" y1="75" x2="250" y2="75" />
+          <line x1="0" y1="100" x2="250" y2="100" />
+          <line x1="0" y1="125" x2="250" y2="125" />
+          <line x1="0" y1="150" x2="250" y2="150" />
+          <line x1="0" y1="175" x2="250" y2="175" />
+          <line x1="0" y1="200" x2="250" y2="200" />
+          <line x1="0" y1="225" x2="250" y2="225" />
+          <line x1="0" y1="250" x2="250" y2="250" />
+        </g>
+        <!-- Axes -->
+        <line x1="0" y1="250" x2="250" y2="250" stroke="white" stroke-width="2" /> <!-- X-axis -->
+        <line x1="0" y1="0" x2="0" y2="250" stroke="white" stroke-width="2" /> <!-- Y-axis -->
+
+        <!-- Blue Points -->
+        <circle cx="10" cy="30" r="4" fill="#3477eb" />
+        <circle cx="30" cy="50" r="4" fill="#3477eb" />
+        <circle cx="50" cy="20" r="4" fill="#3477eb" />
+        <circle cx="70" cy="40" r="4" fill="#3477eb" />
+        <circle cx="90" cy="60" r="4" fill="#3477eb" />
+        <circle cx="110" cy="30" r="4" fill="#3477eb" />
+        <circle cx="130" cy="50" r="4" fill="#3477eb" />
+        <circle cx="150" cy="20" r="4" fill="#3477eb" />
+
+
+        <circle cx="50" cy="140" r="4" fill="#eb4034" />
+        <circle cx="70" cy="120" r="4" fill="#eb4034" />
+        <circle cx="90" cy="160" r="4" fill="#eb4034" />
+        <circle cx="110" cy="130" r="4" fill="#eb4034" />
+        <circle cx="130" cy="170" r="4" fill="#eb4034" />
+      </svg>
+      <p class="card-text">3</p>
+    </div>
+  </div>
+  <div class="card-container">
+    <div class="card" class:fade-in={cards[4]} class:hidden={!cards[4]}> 
+      <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="lightgrey" stroke-width="0.5">
+          <!-- Vertical gridlines -->
+          <line x1="25" y1="0" x2="25" y2="250" />
+          <line x1="50" y1="0" x2="50" y2="250" />
+          <line x1="75" y1="0" x2="75" y2="250" />
+          <line x1="100" y1="0" x2="100" y2="250" />
+          <line x1="125" y1="0" x2="125" y2="250" />
+          <line x1="150" y1="0" x2="150" y2="250" />
+          <line x1="175" y1="0" x2="175" y2="250" />
+          <line x1="200" y1="0" x2="200" y2="250" />
+          <line x1="225" y1="0" x2="225" y2="250" />
+
+          <!-- Horizontal gridlines -->
+          <line x1="0" y1="1" x2="250" y2="1" />
+          <line x1="0" y1="25" x2="250" y2="25" />
+          <line x1="0" y1="50" x2="250" y2="50" />
+          <line x1="0" y1="75" x2="250" y2="75" />
+          <line x1="0" y1="100" x2="250" y2="100" />
+          <line x1="0" y1="125" x2="250" y2="125" />
+          <line x1="0" y1="150" x2="250" y2="150" />
+          <line x1="0" y1="175" x2="250" y2="175" />
+          <line x1="0" y1="200" x2="250" y2="200" />
+          <line x1="0" y1="225" x2="250" y2="225" />
+          <line x1="0" y1="250" x2="250" y2="250" />
+        </g>
+        <!-- Axes -->
+        <line x1="0" y1="250" x2="250" y2="250" stroke="white" stroke-width="2" /> <!-- X-axis -->
+        <line x1="0" y1="0" x2="0" y2="250" stroke="white" stroke-width="2" /> <!-- Y-axis -->
+
+        <!-- Blue Points -->
+        <circle cx="10" cy="30" r="4" fill="#3477eb" />
+        <circle cx="30" cy="50" r="4" fill="#3477eb" />
+        <circle cx="50" cy="20" r="4" fill="#3477eb" />
+        <circle cx="70" cy="40" r="4" fill="#3477eb" />
+        <circle cx="90" cy="60" r="4" fill="#3477eb" />
+        <circle cx="110" cy="30" r="4" fill="#3477eb" />
+        <circle cx="130" cy="50" r="4" fill="#3477eb" />
+        <circle cx="150" cy="20" r="4" fill="#3477eb" />
+
+
+        <circle cx="50" cy="140" r="4" fill="#eb4034" />
+        <circle cx="70" cy="120" r="4" fill="#eb4034" />
+        <circle cx="90" cy="160" r="4" fill="#eb4034" />
+        <circle cx="110" cy="130" r="4" fill="#eb4034" />
+        <circle cx="130" cy="170" r="4" fill="#eb4034" />
+      </svg>
+      <p class="card-text">4</p>
     </div>
   </div>
 </div>
@@ -267,13 +338,14 @@ padding: 20px;
 
 @media (max-width: 768px) {
 .card {
-width: 60vw;
+width: 30vw;
 }
 .card-text {
 font-size: 5vw;
 }
 .allCardContainer {
-display: block;
+display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 }
