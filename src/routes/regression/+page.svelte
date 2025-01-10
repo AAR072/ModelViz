@@ -112,7 +112,7 @@ onMount(() => {
 
         <!-- Sine Graph Points -->
         <circle cx="0" cy="10" r="4" fill="#3477eb" />
-        <circle cx="47.5" cy="150" r="4" fill="#3477eb" />
+        <circle cx="37.5" cy="150" r="4" fill="#3477eb" />
         <circle cx="100" cy="250" r="4" fill="#3477eb" />
         <circle cx="162.5" cy="150" r="4" fill="#3477eb" />
         <circle cx="200" cy="10" r="4" fill="#3477eb" />
@@ -158,36 +158,18 @@ onMount(() => {
         </g>
         <!-- Axes -->
         <line x1="0" y1="250" x2="250" y2="250" stroke="white" stroke-width="2" /> <!-- X-axis -->
-        <line x1="0" y1="0" x2="0" y2="250" stroke="white" stroke-width="2" /> <!-- Y-axis -->
+        <line x1="100" y1="0" x2="100" y2="250" stroke="white" stroke-width="2" /> <!-- Y-axis -->
 
-        <!-- Pink Points -->
-        <circle cx="170" cy="60" r="4" fill="#eb34a7" />
-        <circle cx="160" cy="80" r="4" fill="#eb34a7" />
-        <circle cx="180" cy="75" r="4" fill="#eb34a7" />
-
-        <!-- Cyan Points -->
-        <circle cx="30" cy="150" r="4" fill="#34ebf2" />
-        <circle cx="50" cy="160" r="4" fill="#34ebf2" />
-        <circle cx="70" cy="140" r="4" fill="#34ebf2" />
-
-
-        <!-- Blue Points -->
-        <circle cx="18" cy="30" r="4" fill="#3477eb" />
-        <circle cx="30" cy="40" r="4" fill="#3477eb" />
-        <circle cx="42" cy="25" r="4" fill="#3477eb" />
-
-        <!-- Yellow Points -->
-        <circle cx="130" cy="150" r="4" fill="#e8cb0c" />
-        <circle cx="118" cy="160" r="4" fill="#e8cb0c" />
-        <circle cx="142" cy="145" r="4" fill="#e8cb0c" />
-
-
-        <!-- Red Points -->
-        <circle cx="118" cy="210" r="4" fill="#eb4034" />
-        <circle cx="145" cy="220" r="4" fill="#eb4034" />
-        <circle cx="130" cy="240" r="4" fill="#eb4034" />
+<!-- Exponential Graph Points -->
+<circle cx="0" cy="250" r="4" fill="#3477eb" />
+<circle cx="50" cy="205" r="4" fill="#3477eb" />
+<circle cx="100" cy="150" r="4" fill="#3477eb" />
+<circle cx="150" cy="82" r="4" fill="#3477eb" />
+<circle cx="200" cy="0" r="4" fill="#3477eb" />
+<path d="M200 0 Q 150 90, 110 140 Q 70 190, 0 250"
+          stroke="#eb4034" stroke-width="2" fill="none" />
       </svg>
-      <p class="card-text">2</p>
+      <p class="card-text">Exponential Function</p>
     </div>
   </div>
   <div class="card-container">
@@ -337,15 +319,14 @@ padding: 20px;
 }
 
 @media (max-width: 768px) {
-.card {
-width: 30vw;
-}
 .card-text {
 font-size: 5vw;
 }
 .allCardContainer {
-display: grid;
-  grid-template-columns: repeat(2, 1fr);
+display: block;
+}
+.card {
+width: 60vw;
 }
 
 }
