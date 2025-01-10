@@ -1,5 +1,6 @@
 <script lang="ts">
 import { onMount } from 'svelte';
+import ModelBuilder from '$lib/modelBuilder.svelte';
 let innerWidth = $state(0);
 let onPC = $derived(innerWidth > 768);
 let titleVisible = $state(false);
@@ -7,12 +8,13 @@ let subtitleVisible = $state(false);
 let cards: boolean [] = $state([]);
 let stages: boolean [] = $state([true]);
 let firstDiv = $state(true);
+let secondDiv = $state(false);
 let stagesPtr = 0;
-let chosenFunction: string;
+let chosenFunction: string = $state("");
 for (let index = 0; index < 6; index++) {
   cards.push(false);
 }
-for (let index = 0; index < 2; index++) {
+for (let index = 0; index < 3; index++) {
   stages.push(false);
 }
 onMount(() => {
@@ -31,13 +33,15 @@ onMount(() => {
 function nextStage() {
   stages[stagesPtr] = false;
   stagesPtr++;
-  stages[stagesPtr] = true;
+  setTimeout(() => {stages[stagesPtr] = true;
+ }, 1500);
 }
 function chooseFunction(functionType: string) {
   chosenFunction = functionType;
   nextStage();
   setTimeout(() => {
     firstDiv = false;
+    secondDiv = true;
   }, 1000);
 }
 </script>
@@ -191,8 +195,11 @@ function chooseFunction(functionType: string) {
   </div>
 </div>
 </div>
-{/if}
-
+  {:else if secondDiv}
+  <div class:fade-in={stages[1]} class:hidden={!stages[1]}>
+    <ModelBuilder functionType={chosenFunction} />
+  </div>
+{/if}  
 <style>
 @import "$lib/styles/main.css";
 
