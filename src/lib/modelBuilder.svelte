@@ -29,8 +29,8 @@ function addLayer() {
 
 function useDefaults() {
   layers.update((current) => [
-    { units: 32, activation: "relu", inputShape: "[1]" },
-    { units: 32, activation: "relu", inputShape: "" },
+    { units: 64, activation: "tanh", inputShape: "[1]" },
+    { units: 64, activation: "tanh", inputShape: "" },
   ]);
 }
 
@@ -99,7 +99,6 @@ function exportModel() {
         <!-- Layer Type -->
 
         <!-- Units (for Dense Layers) -->
-        {#if layer.type === "dense"}
           <label>
             Units:
             <input
@@ -109,7 +108,6 @@ function exportModel() {
               on:input={(e) => updateLayer(index, "units", e.target.value)}
             />
           </label>
-        {/if}
 
         <!-- Activation Function -->
         <label >
