@@ -34,6 +34,8 @@
 		"vitest": "^2.0.4"
 	},
 	"dependencies": {
-		"@tensorflow/tfjs": "^4.22.0"
+		"@tensorflow/tfjs": "^4.22.0",
+		"chart.js": "^4.4.7",
+		"layerchart": "^0.70.1"
 	}
 }
