@@ -1,5 +1,5 @@
 import * as tf from "@tensorflow/tfjs";
-import { Chart, Svg, Axis, Bars } from 'layerchart';
+import Chart from 'chart.js/auto';
 
 export function createData(functionType: string, maxX: number, minX: number, pointCount: number): [tf.Tensor, tf.Tensor] {
   if (functionType === "sine") {
