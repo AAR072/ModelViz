@@ -1,105 +1,23 @@
 <script lang="ts">
-import * as tf from "@tensorflow/tfjs"; // TensorFlow.js
+import {
+  startTraining,
+  makePrediction,
+} from '$lib/training';
+
+let epochs = $state(500);
+let batchSize = $state(64);
+let framerate = $state(15);
+let minX = $state(-6.28);
+let maxX = $state(6.28);
+let pointCount = $state(2000);
+let length = $state(5);
+let prediction = $state(0);
+let snapshotRate = $derived(Math.floor(epochs / (length * framerate)));
+
+import * as tf from "@tensorflow/tfjs"; // Ensure this matches the TensorFlow version used in training.ts
 
 let { functionType, model } = $props() as {functionType: string, model: tf.Sequential}
-let epochs: number = $state(500);
-let batchSize: number = $state(64);
-let framerate: number = $state(15);
-let minX: number = $state(-6.28);
-let maxX: number = $state(6.28);
-let pointCount: number = $state(2000);
-let length: number = $state(5);
-let prediction: number = $state(0);
-let snapshotRate: number = $derived(Math.floor(epochs / (length * framerate)));
-let plotData: any; // To store plot data
 
-function createData(functionType: string): [tf.Tensor, tf.Tensor] {
-  if (functionType === "sine") {
-    const xValues = [];
-    const step = (maxX - minX) / (pointCount - 1);
-    for (let i = 0; i < pointCount; i++) {
-      xValues.push(minX + i * step);
-    }
-    const yValues = xValues.map(x => Math.sin(x));
-    const xTensor = tf.tensor(xValues);
-    const yTensor = tf.tensor(yValues);
-    return [xTensor, yTensor];
-  }
-  alert("ERROR");
-  return [tf.tensor([0]), tf.tensor([0])];
-}
-
-function makePrediction(inputValue) {
-  const inputTensor = tf.tensor([inputValue]);
-  const prediction = model.predict(inputTensor);
-  prediction.data().then(predictedValue => {
-    console.log(`Prediction for input ${inputValue}:`, predictedValue);
-  });
-}
-
-function plotGraph(xValues: number[], yValues: number[], predictedValues: number[]) {
-  const trace1 = {
-    x: xValues,
-    y: yValues,
-    type: 'scatter',
-    mode: 'lines',
-    name: 'Training Data',
-    line: { color: 'blue' },
-  };
-
-  const trace2 = {
-    x: xValues,
-    y: predictedValues,
-    type: 'scatter',
-    mode: 'lines',
-    name: 'Model Predictions',
-    line: { color: 'red' },
-  };
-
-  const layout = {
-    title: 'Model Training and Predictions',
-    xaxis: { title: 'X' },
-    yaxis: { title: 'Y' },
-  };
-
-  if (!plotData) {
-    // Initialize the plot if it doesn't exist
-    Plotly.newPlot('predictionChart', [trace1, trace2], layout);
-  } else {
-    // Update the plot if it already exists
-    Plotly.react('predictionChart', [trace1, trace2], layout);
-  }
-}
-
-function startTraining() {
-  const [xData, yData] = createData(functionType);
-  model.compile({
-    optimizer: tf.train.adam(),
-    loss: 'meanSquaredError',
-    metrics: ['mse'],
-  });
-
-  const printMSECallback = {
-    onEpochEnd: async (epoch: number, logs: tf.Logs) => {
-      console.log(`Epoch ${epoch + 1}: MSE = ${logs.loss}`);
-
-      if (epoch % snapshotRate === 0) {
-        // Generate predictions and plot snapshot
-        const predictedValues = xData.arraySync().map((x: number) => model.predict(tf.tensor([x])).dataSync()[0]);
-        plotGraph(xData.arraySync(), yData.arraySync(), predictedValues);
-      }
-    },
-  };
-
-  model.fit(xData, yData, {
-    epochs: epochs,
-    batchSize: batchSize,
-    shuffle: true,
-    callbacks: [printMSECallback],
-  }).then(info => {
-    console.log('Final accuracy', info.history.mse);
-  });
-}
 </script>
 
 <div class="goodDiv">
@@ -107,89 +25,52 @@ function startTraining() {
   <div class="trainingParams">
     <label>
       Epochs:
-      <input
-        class="unitInput"
-        type="number"
-        defaultvalue={500}
-        bind:value={epochs}
-      />
+      <input class="unitInput" type="number" bind:value={epochs} />
     </label>
-    <br>
+    <br />
     <label>
       Batch Size:
-      <input
-        class="unitInput"
-        type="number"
-        defaultvalue={64}
-        bind:value={batchSize}
-      />
+      <input class="unitInput" type="number" bind:value={batchSize} />
     </label>
-    <br>
+    <br />
     <label>
       Minimum X Value:
-      <input
-        class="unitInput"
-        type="number"
-        defaultvalue={-6.28}
-        bind:value={minX}
-      />
+      <input class="unitInput" type="number" bind:value={minX} />
     </label>
-    <br>
+    <br />
     <label>
       Maximum X Value:
-      <input
-        class="unitInput"
-        type="number"
-        defaultvalue={6.28}
-        bind:value={maxX}
-      />
+      <input class="unitInput" type="number" bind:value={maxX} />
     </label>
-    <br>
+    <br />
     <label>
       Point Count:
-      <input
-        class="unitInput"
-        type="number"
-        defaultvalue={2000}
-        bind:value={pointCount}
-      />
+      <input class="unitInput" type="number" bind:value={pointCount} />
     </label>
-
-    <br>
+    <br />
     <label>
       Frame Rate:
-      <input
-        class="unitInput"
-        type="number"
-        defaultvalue={15}
-        bind:value={framerate}
-      />
+      <input class="unitInput" type="number" bind:value={framerate} />
     </label>
-    <br>
+    <br />
     <label>
       Timelapse Length (s):
-      <input
-        class="unitInput"
-        type="number"
-        defaultvalue={5}
-        bind:value={length}
-      />
+      <input class="unitInput" type="number" bind:value={length} />
     </label>
-    <br>
+    <br />
     <label>
       Prediction:
-      <input
-        class="unitInput"
-        type="number"
-        defaultvalue={0.5}
-        bind:value={prediction}
-      />
+      <input class="unitInput" type="number" bind:value={prediction} />
     </label>
 
     <p>Snapshot every {snapshotRate} epochs</p>
   </div>
-  <button class="boton-elegante" id="greenElon" onclick={startTraining}>Start Training</button>
-  <button class="boton-elegante" id="yellowElon" onclick={()=>makePrediction(prediction)}>Make Prediction</button>
+  <button class="boton-elegante" id="greenElon" on:click={() => startTraining(functionType, model, minX, maxX, pointCount, epochs, batchSize)}>
+    Start Training
+  </button>
+  <button class="boton-elegante" id="yellowElon" on:click={() => makePrediction(prediction, model)}>
+    Make Prediction
+  </button>
   <div id="predictionChart" style="width:100%; height:400px;"></div>
 </div>
 <style>
