@@ -1,7 +1,7 @@
 <script lang="ts">
 import {
   startTraining,
-  makePrediction,
+  visMakePrediction,
 } from '$lib/training';
 
 let epochs = $state(500);
@@ -65,13 +65,13 @@ let { functionType, model } = $props() as {functionType: string, model: tf.Seque
 
     <p>Snapshot every {snapshotRate} epochs</p>
   </div>
-  <button class="boton-elegante" id="greenElon" on:click={() => startTraining(functionType, model, minX, maxX, pointCount, epochs, batchSize)}>
+  <button class="boton-elegante" id="greenElon" on:click={() => startTraining(functionType, model, minX, maxX, pointCount, epochs + 1, batchSize, snapshotRate)}>
     Start Training
   </button>
-  <button class="boton-elegante" id="yellowElon" on:click={() => makePrediction(prediction, model)}>
+  <button class="boton-elegante" id="yellowElon" on:click={() => {visMakePrediction(prediction, model)}}>
     Make Prediction
   </button>
-  <div id="predictionChart" style="width:100%; height:400px;"></div>
+  <canvas id="myChart" width="400" height="200"></canvas>
 </div>
 <style>
 @import '$lib/styles/main.css';
