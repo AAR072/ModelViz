@@ -4,15 +4,15 @@ import {
   visMakePrediction,
 } from '$lib/training';
 
-let epochs = $state(500);
+let epochs = $state(100);
 let batchSize = $state(64);
-let framerate = $state(15);
-let minX = $state(-6.28);
+let framerate = $state(3);
+let minX = $state(-6.28)
 let maxX = $state(6.28);
-let pointCount = $state(2000);
-let length = $state(5);
+let pointCount = $state(500);
 let prediction = $state(0);
-let snapshotRate = $derived(Math.floor(epochs / (length * framerate)));
+let answer: any = $state(0);
+let snapshotRate = $derived(Math.floor(epochs / framerate));
 
 import * as tf from "@tensorflow/tfjs"; // Ensure this matches the TensorFlow version used in training.ts
 
@@ -49,27 +49,24 @@ let { functionType, model } = $props() as {functionType: string, model: tf.Seque
     </label>
     <br />
     <label>
-      Frame Rate:
+      Snapshot Count:
       <input class="unitInput" type="number" bind:value={framerate} />
     </label>
     <br />
     <label>
-      Timelapse Length (s):
-      <input class="unitInput" type="number" bind:value={length} />
-    </label>
-    <br />
-    <label>
-      Prediction:
+      Make a prediction:
       <input class="unitInput" type="number" bind:value={prediction} />
     </label>
+    <button class="boton-elegante" id="yellowElon" on:click={() => {answer = visMakePrediction(prediction, model)}}>
+      Make Prediction
+    </button>
 
     <p>Snapshot every {snapshotRate} epochs</p>
+    <br>
+    <p>Model Prediction: {answer}</p>
   </div>
   <button class="boton-elegante" id="greenElon" on:click={() => startTraining(functionType, model, minX, maxX, pointCount, epochs + 1, batchSize, snapshotRate)}>
     Start Training
-  </button>
-  <button class="boton-elegante" id="yellowElon" on:click={() => {visMakePrediction(prediction, model)}}>
-    Make Prediction
   </button>
   <canvas id="myChart" width="400" height="200"></canvas>
 </div>

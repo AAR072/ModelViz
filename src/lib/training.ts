@@ -1,6 +1,15 @@
 import * as tf from "@tensorflow/tfjs";
 import Chart from 'chart.js/auto';
+function getRandomRedColor(): { borderColor: string; backgroundColor: string } {
+  const red = Math.floor(Math.random() * 256); // Random red value (0-255)
+  const green = Math.floor(Math.random() * 128); // Random green value (0-127 for a red-dominated shade)
+  const blue = Math.floor(Math.random() * 128); // Random blue value (0-127 for a red-dominated shade)
 
+  return {
+    borderColor: `rgb(${red}, ${green}, ${blue})`,
+    backgroundColor: `rgba(${red}, ${green}, ${blue}, 1)`,
+  };
+}
 export function createData(functionType: string, maxX: number, minX: number, pointCount: number): [tf.Tensor, tf.Tensor] {
   if (functionType === "sine") {
     const xValues = [];
@@ -13,7 +22,7 @@ export function createData(functionType: string, maxX: number, minX: number, poi
     const yTensor = tf.tensor(yValues);
     return [xTensor, yTensor];
   }
-  alert("ERROR");
+  alert("Error creating data");
   return [tf.tensor([0]), tf.tensor([0])];
 }
 
@@ -23,12 +32,10 @@ export function makePrediction(inputValue: number, model: tf.Sequential) {
   return prediction;
 }
 
-export function visMakePrediction(inputValue: number, model: tf.Sequential){
+export function visMakePrediction(inputValue: number, model: tf.Sequential): any {
   const inputTensor = tf.tensor([inputValue]);
   const prediction = model.predict(inputTensor) as tf.Tensor;
-  prediction.data().then(predictedValue => {
-    return predictedValue;
-  });
+  return prediction.dataSync();
 }
 
 export function startTraining(functionType: string, model: tf.Sequential, maxX: number, minX: number, pointCount: number, epochs: number, batchSize: number, framerate: number) {
@@ -41,7 +48,15 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
   });
 
   const predictions: number[] = [];
-  const xValuesForPlotting: number[] = Array.from(xData.dataSync());
+  const temp: number[] = Array.from(xData.dataSync());
+  let xValuesForPlotting: number[] = []; 
+  let step = Math.round(temp.length / 500);
+  for (let i = 0; i < temp.length; i += step) {
+    const val: number = temp[i]; 
+    const secondary: string = val.toFixed(2); 
+    const final: number = +secondary;
+    xValuesForPlotting.push(final);
+  }
 
   const printMSECallback = {
     onEpochEnd: async (epoch: number, logs: tf.Logs) => {
@@ -68,61 +83,60 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
     shuffle: true,
     callbacks: [printMSECallback],
   }).then(info => {
-    console.log('Final accuracy', info.history.mse);
+      console.log('Final accuracy', info.history.mse);
 
-    // After training, plot the results using Chart.js
-    const ctx = document.getElementById('myChart') as HTMLCanvasElement;
-    console.log(ctx);
-    const chartData = {
-      labels: xValuesForPlotting,
-      datasets: [{
-        label: 'Training Data (Sine Function)',
-        data: Array.from(yData.dataSync()),
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: false,
-        tension: 0.1
-      }]
-    };
-      console.log(predictions);
-
-    predictions.forEach((predictionSet, epochIndex) => {
-      chartData.datasets.push({
-        label: `Epoch ${framerate * (epochIndex + 1)} Predictions`,
-        data: predictionSet,
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        fill: false,
-        tension: 0.1
+      // After training, plot the results using Chart.js
+      const ctx = document.getElementById('myChart') as HTMLCanvasElement;
+      console.log(ctx);
+      const chartData = {
+        labels: xValuesForPlotting,
+        datasets: [{
+          label: 'Training Data (Sine Function)',
+          data: Array.from(yData.dataSync()),
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: false,
+          tension: 0.1
+        }]
+      };
+      predictions.forEach((predictionSet, epochIndex) => {
+        const colors = getRandomRedColor();
+        chartData.datasets.push({
+          label: `Epoch ${framerate * (epochIndex + 1)} Predictions`,
+          data: predictionSet,
+          borderColor: colors.borderColor,
+          backgroundColor: colors.backgroundColor,
+          fill: false,
+          tension: 0.1
+        });
       });
-    });
 
-    const myChart = new Chart(ctx, {
-      type: 'line',
-      data: chartData,
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: 'Model Training and Predictions'
-          },
-        },
-        scales: {
-          x: {
-            title: {
-              display: false,
-              text: 'X Values'
-            }
-          },
-          y: {
+      const myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+          responsive: true,
+          plugins: {
             title: {
               display: true,
-              text: 'Y Values'
+              text: 'Model Training and Predictions'
+            },
+          },
+          scales: {
+            x: {
+              title: {
+                display: false,
+                text: 'X Values'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Y Values'
+              }
             }
           }
         }
-      }
+      });
     });
-  });
 }
