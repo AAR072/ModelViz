@@ -21,6 +21,26 @@ export function createData(functionType: string, maxX: number, minX: number, poi
     const xTensor = tf.tensor(xValues);
     const yTensor = tf.tensor(yValues);
     return [xTensor, yTensor];
+  } else if (functionType === "exponential") {
+    const xValues = [];
+    const step = (maxX - minX) / (pointCount - 1);
+    for (let i = 0; i < pointCount; i++) {
+      xValues.push(minX + i * step);
+    }
+    const yValues = xValues.map(x => Math.exp(x));
+    const xTensor = tf.tensor(xValues);
+    const yTensor = tf.tensor(yValues);
+    return [xTensor, yTensor];
+  } else if (functionType === "parabola") {
+    const xValues = [];
+    const step = (maxX - minX) / (pointCount - 1);
+    for (let i = 0; i < pointCount; i++) {
+      xValues.push(minX + i * step);
+    }
+    const yValues = xValues.map(x => x ** 2);
+    const xTensor = tf.tensor(xValues);
+    const yTensor = tf.tensor(yValues);
+    return [xTensor, yTensor];
   }
   alert("Error creating data");
   return [tf.tensor([0]), tf.tensor([0])];
@@ -52,7 +72,7 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
   let xValuesForPlotting: number[] = []; 
   let step = Math.round(temp.length / 500);
   for (let i = 0; i < temp.length; i += step) {
-    const val: number = temp[i]; 
+    const val: number = temp[temp.length - i - 1]; 
     const secondary: string = val.toFixed(2); 
     const final: number = +secondary;
     xValuesForPlotting.push(final);
