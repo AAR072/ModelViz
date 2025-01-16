@@ -122,6 +122,9 @@ color: white;
 .trainingParams {
 font-size: 2vw;
 }
+#pageTitle {
+font-size: 3vw;
+}
 @media (max-width: 768px) { 
 .trainingParams {
 font-size: 5vw;
