@@ -27,7 +27,7 @@ export function createData(functionType: string, maxX: number, minX: number, poi
     for (let i = 0; i < pointCount; i++) {
       xValues.push(minX + i * step);
     }
-    const yValues = xValues.map(x => Math.exp(x));
+    const yValues = xValues.map(x => Math.pow(2,x));
     const xTensor = tf.tensor(xValues);
     const yTensor = tf.tensor(yValues);
     return [xTensor, yTensor];
@@ -111,7 +111,7 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
       const chartData = {
         labels: xValuesForPlotting,
         datasets: [{
-          label: 'Training Data (Sine Function)',
+          label: 'Training Data (Base Function)',
           data: Array.from(yData.dataSync()),
           borderColor: 'rgb(75, 192, 192)',
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -136,11 +136,16 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
         data: chartData,
         options: {
           responsive: true,
+          aspectRatio: 1,
           plugins: {
             title: {
               display: true,
               text: 'Model Training and Predictions'
             },
+            decimation: {
+              enabled:  true,
+              algorithm: 'lttb',
+            }
           },
           scales: {
             x: {
