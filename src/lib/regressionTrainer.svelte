@@ -60,9 +60,8 @@ let { functionType, model } = $props() as {functionType: string, model: tf.Seque
     <button class="boton-elegante" id="yellowElon" on:click={() => {answer = visMakePrediction(prediction, model)}}>
       Make Prediction
     </button>
-
+    <p id="progress"></p>
     <p>Snapshot every {snapshotRate} epochs</p>
-    <br>
     <p>Model Prediction: {answer}</p>
   </div>
   <button class="boton-elegante" id="greenElon" on:click={() => startTraining(functionType, model, minX, maxX, pointCount, epochs + 1, batchSize, snapshotRate)}>

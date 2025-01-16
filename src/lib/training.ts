@@ -1,5 +1,6 @@
 import * as tf from "@tensorflow/tfjs";
 import Chart, { LinearScale } from 'chart.js/auto';
+let myChart: Chart | null = null;
 function getRandomRedColor(): { borderColor: string; backgroundColor: string } {
   const red = Math.floor(Math.random() * 256); // Random red value (0-255)
   const green = Math.floor(Math.random() * 128); // Random green value (0-127 for a red-dominated shade)
@@ -59,8 +60,11 @@ export function visMakePrediction(inputValue: number, model: tf.Sequential): any
 }
 
 export function startTraining(functionType: string, model: tf.Sequential, maxX: number, minX: number, pointCount: number, epochs: number, batchSize: number, framerate: number) {
-  console.log(framerate)
+  if (myChart) {
+    myChart.destroy();
+  }
   const [xData, yData] = createData(functionType, maxX, minX, pointCount);
+  const trainingPreview = document.getElementById('progress') as HTMLParagraphElement;
   model.compile({
     optimizer: tf.train.adam(),
     loss: 'meanSquaredError',
@@ -70,8 +74,7 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
   const predictions: number[] = [];
   const temp: number[] = Array.from(xData.dataSync());
   let xValuesForPlotting: number[] = []; 
-  let step = Math.round(temp.length / 500);
-  for (let i = 0; i < temp.length; i += step) {
+  for (let i = 0; i < temp.length; i++) {
     const val: number = temp[temp.length - i - 1]; 
     const secondary: string = val.toFixed(2); 
     const final: number = +secondary;
@@ -80,7 +83,7 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
 
   const printMSECallback = {
     onEpochEnd: async (epoch: number, logs: tf.Logs) => {
-      console.log(`Epoch ${epoch + 1}: MSE = ${logs.loss}`);
+      trainingPreview.innerText = `Epoch: ${epoch}`;
 
       // Save predictions every 20 epochs
       if ((epoch + 1) % framerate === 0) {
@@ -103,11 +106,9 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
     shuffle: true,
     callbacks: [printMSECallback],
   }).then(info => {
-      console.log('Final accuracy', info.history.mse);
-
+      trainingPreview.innerText = `Finished Training`;
       // After training, plot the results using Chart.js
       const ctx = document.getElementById('myChart') as HTMLCanvasElement;
-      console.log(ctx);
       const chartData = {
         labels: xValuesForPlotting,
         datasets: [{
@@ -131,55 +132,55 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
         });
       });
 
-const myChart = new Chart(ctx, {
-  type: 'line',
-  data: chartData,
-  options: {
-    responsive: true,
-    aspectRatio: 1,
-    plugins: {
-      title: {
-        display: true,
-        text: 'Model Training and Predictions'
-      },
-      decimation: {
-        enabled: true,
-        algorithm: 'lttb',
-      },
-    },
-    scales: {
-      x: {
-        type: 'linear',
-        title: {
-          display: true, // Display x-axis title
-          text: 'X Values'
+      myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+          responsive: true,
+          aspectRatio: 1,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Model Training and Predictions'
+            },
+            decimation: {
+              enabled: true,
+              algorithm: 'lttb',
+            },
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: {
+                display: true, // Display x-axis title
+                text: 'X Values'
+              },
+              grid: {
+                drawOnChartArea: true, // Enable grid lines across the chart area
+                color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
+                lineWidth: 1, // Set grid line width
+              },
+              ticks: {
+                stepSize: 1, // Control tick spacing (optional)
+              },
+            },
+            y: {
+              type: 'linear',
+              title: {
+                display: true, // Display y-axis title
+                text: 'Y Values'
+              },
+              grid: {
+                drawOnChartArea: true, // Enable grid lines across the chart area
+                color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
+                lineWidth: 1, // Set grid line width
+              },
+              ticks: {
+                stepSize: 1, // Customize tick intervals for the y-axis (optional)
+              },
+            },
+          },
         },
-        grid: {
-          drawOnChartArea: true, // Enable grid lines across the chart area
-          color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-          lineWidth: 1, // Set grid line width
-        },
-        ticks: {
-          stepSize: 1, // Control tick spacing (optional)
-        },
-      },
-      y: {
-        type: 'linear',
-        title: {
-          display: true, // Display y-axis title
-          text: 'Y Values'
-        },
-        grid: {
-          drawOnChartArea: true, // Enable grid lines across the chart area
-          color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-          lineWidth: 1, // Set grid line width
-        },
-        ticks: {
-          stepSize: 1, // Customize tick intervals for the y-axis (optional)
-        },
-      },
-    },
-  },
+      });
 });
-    });
 }
