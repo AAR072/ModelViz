@@ -1,5 +1,5 @@
 import * as tf from "@tensorflow/tfjs";
-import Chart from 'chart.js/auto';
+import Chart, { LinearScale } from 'chart.js/auto';
 function getRandomRedColor(): { borderColor: string; backgroundColor: string } {
   const red = Math.floor(Math.random() * 256); // Random red value (0-255)
   const green = Math.floor(Math.random() * 128); // Random green value (0-127 for a red-dominated shade)
@@ -131,37 +131,55 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
         });
       });
 
-      const myChart = new Chart(ctx, {
-        type: 'line',
-        data: chartData,
-        options: {
-          responsive: true,
-          aspectRatio: 1,
-          plugins: {
-            title: {
-              display: true,
-              text: 'Model Training and Predictions'
-            },
-            decimation: {
-              enabled:  true,
-              algorithm: 'lttb',
-            }
-          },
-          scales: {
-            x: {
-              title: {
-                display: false,
-                text: 'X Values'
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Y Values'
-              }
-            }
-          }
-        }
-      });
+const myChart = new Chart(ctx, {
+  type: 'line',
+  data: chartData,
+  options: {
+    responsive: true,
+    aspectRatio: 1,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Model Training and Predictions'
+      },
+      decimation: {
+        enabled: true,
+        algorithm: 'lttb',
+      },
+    },
+    scales: {
+      x: {
+        type: 'linear',
+        title: {
+          display: true, // Display x-axis title
+          text: 'X Values'
+        },
+        grid: {
+          drawOnChartArea: true, // Enable grid lines across the chart area
+          color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
+          lineWidth: 1, // Set grid line width
+        },
+        ticks: {
+          stepSize: 1, // Control tick spacing (optional)
+        },
+      },
+      y: {
+        type: 'linear',
+        title: {
+          display: true, // Display y-axis title
+          text: 'Y Values'
+        },
+        grid: {
+          drawOnChartArea: true, // Enable grid lines across the chart area
+          color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
+          lineWidth: 1, // Set grid line width
+        },
+        ticks: {
+          stepSize: 1, // Customize tick intervals for the y-axis (optional)
+        },
+      },
+    },
+  },
+});
     });
 }
