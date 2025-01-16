@@ -87,7 +87,6 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
 
       // Save predictions every 20 epochs
       if ((epoch + 1) % framerate === 0) {
-        console.log(`Prediction`);
         const predictionsAtEpoch: number[] = [];
         xData.dataSync().forEach((inputValue, index) => {
           const prediction = makePrediction(inputValue, model);
