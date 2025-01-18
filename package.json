@@ -34,6 +34,7 @@
 		"vitest": "^2.0.4"
 	},
 	"dependencies": {
+		"@tensorflow-models/knn-classifier": "^1.2.6",
 		"@tensorflow/tfjs": "^4.22.0",
 		"chart.js": "^4.4.7"
 	}
