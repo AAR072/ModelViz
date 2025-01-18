@@ -10,7 +10,6 @@ let pointCount: number = $state(1);
 let gamma: number = $state(0);
 let degree: number = $state(0);
 let { dataset } = $props() as {dataset: string};
-alert(dataset);
 
 </script>
 
@@ -22,34 +21,6 @@ alert(dataset);
       <input class="unitInput" type="number" bind:value={pointCount} min="1" step="any" />
     </label>
     <br>
-    <label>
-      Kernel Type:
-      <select class="unitInput" bind:value={kernel}>
-        <option value="linear">Linear (Ridgid decision boundary)</option>
-        <option value="rbf">RBF (Tolerant decision boundary)</option>
-        <option value="poly">Polynomial (Loose decision boundary)</option>
-      </select>
-    </label>
-    <br />
-    <label>
-      C (Model Tolderance):
-      <input class="unitInput" type="number" bind:value={regularization} min="0" step="any" />
-    </label>
-    <br />
-    <label>
-      Epsilon (Model Complexity):
-      <input class="unitInput" type="number" bind:value={epsilon} min="0" step="any" />
-    </label>
-    <br />
-    <label>
-      Gamma (Model Smoothing):
-      <input class="unitInput" type="number" bind:value={gamma} min="0" step="any" />
-    </label>
-    <br />
-    <label>
-      Degree of Polynomial:
-      <input class="unitInput" type="number" bind:value={degree} min="0" />
-    </label>
   </div>
   <button class="boton-elegante" id="greenElon" on:click={() => viewKNN(dataset, pointCount)}>
     Start Training
