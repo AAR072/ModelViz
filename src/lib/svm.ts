@@ -23,16 +23,13 @@ let myChart: Chart | null = null;
  * @param classifier The KNN classifier to add data points to.
  */
 export function createData(functionType: string, pointCount: number, classifier: tfModels.KNNClassifier) {
-  if (!classifier || typeof classifier.addExample !== 'function') {
-    throw new Error("Invalid classifier provided.");
-  }
 
   const data = []; // Array to hold points and labels
 
   for (let i = 0; i < pointCount; i++) {
     // Generate random x and y values
-    const x = Math.random();  // Random x value between 0 and 1
-    const y = Math.random();  // Random y value between 0 and 1
+    const x = +(Math.random() * 100).toFixed(2);  // Random x value between 0 and 1
+    const y = +(Math.random() * 100).toFixed(2);  // Random y value between 0 and 1
 
     let label: number;
 
@@ -41,10 +38,10 @@ export function createData(functionType: string, pointCount: number, classifier:
       label = y > x ? 1 : 0;  // Points above the line y = x are labeled 1, below are 0
     } else if (functionType === "td") {
       // Classify the point based on its position relative to y = 0.5
-      label = y > 0.5 ? 1 : 0;  // Points above y = 0.5 are labeled 1, below are 0
+      label = y > 50 ? 1 : 0;  // Points above y = 0.5 are labeled 1, below are 0
     } else if (functionType === "lr") {
       // Classify the point based on its position relative to x = 0.5
-      label = x > 0.5 ? 1 : 0;  // Points where x > 0.5 are labeled 1, others are 0
+      label = x > 50 ? 1 : 0;  // Points where x > 0.5 are labeled 1, others are 0
     } else {
       alert("Error creating data");
       return [];
@@ -59,28 +56,30 @@ export function createData(functionType: string, pointCount: number, classifier:
     // Optionally keep track of the data (useful for testing/debugging)
     data.push({ x: [x, y], y: label });
   }
-  console.log(classifier);
-
-  return data;
+return data;
 }
 export function viewKNN(functionType: string, pointCount: number) {
   const model = tfModels.create();
-  const chartData = { labels: [] as string[], datasets: [{}] };
   createData(functionType, pointCount, model);
+  const chartData = { 
+    labels: ["Red Points","Blue Points"] as string[], 
+    datasets: [] as { [key: string]: any }[]  // array of objects with string keys and any values
+  };
   const dataset = model.getClassifierDataset();
-
+  // 1. Create the dataset that we need to input
+  // 2. Make predictions and store.
+  // 3. Add to data and label
   // Colors for each class
   const colors = ['red', 'blue', 'green', 'orange', 'purple'];
-
   Object.keys(dataset).forEach((classLabel, index) => {
     const tensor = dataset[classLabel]; // Get the tensor for this class
     const examples = tensor.arraySync(); // Convert tensor to array
 
     // Create a dataset for this class
     chartData.datasets.push({
-      label: `Class ${classLabel}` as string,
-      datasets: examples.map(([x, y]: number[]) => ({ x, y })),
-      backgroundColor: colors[index % colors.length], // Cycle through colors
+      label: `${classLabel}` as string,
+      data: examples.map(([x, y]: number[]) => ({ x, y })),
+      backgroundColor: colors[+classLabel], // Cycle through colors
     });
   });
   const ctx = document.getElementById('chart') as HTMLCanvasElement;
@@ -91,24 +90,42 @@ export function viewKNN(functionType: string, pointCount: number) {
   if (myChart) {
     myChart.destroy();
   }
+
+  myChart = new Chart(ctx, {
+    type: 'scatter',
+    data: chartData,
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          type: 'linear',
+          position: 'bottom',
+          title: { display: true, text: 'X Coordinate' },
+        },
+        y: {
+          title: { display: true, text: 'Y Coordinate' },
+        },
+      },
+    },
+  });
 }
-  // myChart = new Chart(ctx, {
-  //   type: 'scatter',
-  //   data: chartData,
-  //   options: {
-  //     responsive: true,
-  //     scales: {
-  //       x: {
-  //         type: 'linear',
-  //         position: 'bottom',
-  //         title: { display: true, text: 'X Coordinate' },
-  //       },
-  //       y: {
-  //         title: { display: true, text: 'Y Coordinate' },
-  //       },
-  //     },
-  //   },
-  // });
+// myChart = new Chart(ctx, {
+//   type: 'scatter',
+//   data: chartData,
+//   options: {
+//     responsive: true,
+//     scales: {
+//       x: {
+//         type: 'linear',
+//         position: 'bottom',
+//         title: { display: true, text: 'X Coordinate' },
+//       },
+//       y: {
+//         title: { display: true, text: 'Y Coordinate' },
+//       },
+//     },
+//   },
+// });
 // }
 
 
