@@ -2,19 +2,6 @@ import * as tf from "@tensorflow/tfjs";
 import * as tfModels from "@tensorflow-models/knn-classifier";
 import Chart, { LinearScale, type ChartData, type Point } from 'chart.js/auto';
 let myChart: Chart | null = null;
-// import Chart, { LinearScale } from 'chart.js/auto';
-// let myChart: Chart | null = null;
-// function getRandomRedColor(): { borderColor: string; backgroundColor: string } {
-//   const red = Math.floor(Math.random() * 256); // Random red value (0-255)
-//   const green = Math.floor(Math.random() * 128); // Random green value (0-127 for a red-dominated shade)
-//   const blue = Math.floor(Math.random() * 128); // Random blue value (0-127 for a red-dominated shade)
-
-//   return {
-//     borderColor: `rgb(${red}, ${green}, ${blue})`,
-//     backgroundColor: `rgba(${red}, ${green}, ${blue}, 1)`,
-//   };
-// }
-
 /**
  * Generates data points and adds them to the provided KNN classifier.
  *
@@ -28,8 +15,8 @@ export function createData(functionType: string, pointCount: number, classifier:
 
   for (let i = 0; i < pointCount; i++) {
     // Generate random x and y values
-    const x = +(Math.random() * 100).toFixed(2);  // Random x value between 0 and 1
-    const y = +(Math.random() * 100).toFixed(2);  // Random y value between 0 and 1
+    const x = +(Math.random()).toFixed(2);  // Random x value between 0 and 1
+    const y = +(Math.random()).toFixed(2);  // Random y value between 0 and 1
 
     let label: number;
 
@@ -38,12 +25,11 @@ export function createData(functionType: string, pointCount: number, classifier:
       label = y > x ? 1 : 0;  // Points above the line y = x are labeled 1, below are 0
     } else if (functionType === "td") {
       // Classify the point based on its position relative to y = 0.5
-      label = y > 50 ? 1 : 0;  // Points above y = 0.5 are labeled 1, below are 0
+      label = y > 0.5 ? 1 : 0;  // Points above y = 0.5 are labeled 1, below are 0
     } else if (functionType === "lr") {
       // Classify the point based on its position relative to x = 0.5
-      label = x > 50 ? 1 : 0;  // Points where x > 0.5 are labeled 1, others are 0
+      label = x > 0.5 ? 1 : 0;  // Points where x > 0.5 are labeled 1, others are 0
     } else {
-      alert("Error creating data");
       return [];
     }
 
@@ -56,213 +42,115 @@ export function createData(functionType: string, pointCount: number, classifier:
     // Optionally keep track of the data (useful for testing/debugging)
     data.push({ x: [x, y], y: label });
   }
-return data;
+  return data;
 }
 export function viewKNN(functionType: string, pointCount: number) {
   const model = tfModels.create();
-  createData(functionType, pointCount, model);
+  const predictionSet = createData(functionType, pointCount, model);
   const chartData = { 
     labels: ["Red Points","Blue Points"] as string[], 
     datasets: [] as { [key: string]: any }[]  // array of objects with string keys and any values
-  };
-  const dataset = model.getClassifierDataset();
+  }
   // 1. Create the dataset that we need to input
-  // 2. Make predictions and store.
-  // 3. Add to data and label
-  // Colors for each class
-  const colors = ['red', 'blue', 'green', 'orange', 'purple'];
-  Object.keys(dataset).forEach((classLabel, index) => {
-    const tensor = dataset[classLabel]; // Get the tensor for this class
-    const examples = tensor.arraySync(); // Convert tensor to array
+  let redArray: number[][] = [];
+  let blueArray: number[][] = [];
+  for (let i = 0; i < predictionSet.length; i++) {
+    if (predictionSet[i].y === 0) {
+      redArray.push(predictionSet[i].x);
+    } else {
+      blueArray.push(predictionSet[i].x);
+    }
+  }
+  async function processPredictions() {
+    // Store promises for redArray predictions
+    const redPromises = redArray.map((item, i) => {
+      const feature = tf.tensor(item); // Feature vector [x, y]
+      return model.predictClass(feature).then((prediction) => {
+        redArray[i].push(+prediction.label);
+      });
+    });
+
+    // Store promises for blueArray predictions
+    const bluePromises = blueArray.map((item, i) => {
+      const feature = tf.tensor(item); // Feature vector [x, y]
+      return model.predictClass(feature).then((prediction) => {
+        blueArray[i].push(+prediction.label);
+      });
+    });
+
+    // Wait for all predictions to complete
+    await Promise.all([...redPromises, ...bluePromises]);
+
+    // Now you can continue with the rest of the code
+    const dataset = model.getClassifierDataset();
+
+    // 2. Make predictions and store.
+    // 3. Add to data and label
+    // Colors for each class
+    const colors = ['red', 'blue', 'green', 'orange', 'purple'];
 
     // Create a dataset for this class
-    chartData.datasets.push({
-      label: `${classLabel}` as string,
-      data: examples.map(([x, y]: number[]) => ({ x, y })),
-      backgroundColor: colors[+classLabel], // Cycle through colors
-    });
-  });
-  const ctx = document.getElementById('chart') as HTMLCanvasElement;
-  if (!ctx) {
-    console.error("Canvas element with id 'chart' not found");
-    return;
-  }
-  if (myChart) {
-    myChart.destroy();
-  }
+    for (let i = 0; i < redArray.length; i++) {
+      chartData.datasets.push({
+        label: `${redArray[i][2]}` as string,
+        data: [{x: redArray[i][0], y: redArray[i][1]}],
+        backgroundColor: colors[+redArray[i][2]], // Cycle through colors
+      });
+    }
+    for (let i = 0; i < blueArray.length; i++) {
+      chartData.datasets.push({
+        label: `${blueArray[i][2]}` as string,
+        data: [{x: blueArray[i][0], y: blueArray[i][1]}],
+        backgroundColor: colors[+blueArray[i][2]], // Cycle through colors
+      });
+    }
+    const ctx = document.getElementById('chart') as HTMLCanvasElement;
+    if (!ctx) {
+      console.error("Canvas element with id 'chart' not found");
+      return;
+    }
+    if (myChart) {
+      myChart.destroy();
+    }
 
-  myChart = new Chart(ctx, {
-    type: 'scatter',
-    data: chartData,
-    options: {
-      responsive: true,
-      scales: {
-        x: {
-          type: 'linear',
-          position: 'bottom',
-          title: { display: true, text: 'X Coordinate' },
+    myChart = new Chart(ctx, {
+      type: 'scatter',
+      data: chartData,
+      options: {
+        plugins: {
+          legend: {
+            display: false
+          }
         },
-        y: {
-          title: { display: true, text: 'Y Coordinate' },
+        aspectRatio: 1,
+        events: [],
+        interaction: false,
+        responsive: true,
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom',
+            title: { display: true, text: 'X Coordinate' },
+            grid: {
+              drawOnChartArea: true, // Enable grid lines across the chart area
+              color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
+              lineWidth: 1, // Set grid line width
+            },
+
+          },
+          y: {
+            grid: {
+              drawOnChartArea: true, // Enable grid lines across the chart area
+              color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
+              lineWidth: 1, // Set grid line width
+            },
+            title: { display: true, text: 'Y Coordinate' },
+          },
         },
       },
-    },
-  });
+    });
+    // You can proceed to the rest of the code here, knowing the predictions have been processed.
+  }
+  processPredictions();
+  // Call the function to process predictions
 }
-// myChart = new Chart(ctx, {
-//   type: 'scatter',
-//   data: chartData,
-//   options: {
-//     responsive: true,
-//     scales: {
-//       x: {
-//         type: 'linear',
-//         position: 'bottom',
-//         title: { display: true, text: 'X Coordinate' },
-//       },
-//       y: {
-//         title: { display: true, text: 'Y Coordinate' },
-//       },
-//     },
-//   },
-// });
-// }
-
-
-// export function makePrediction(inputValue: number, model: tf.Sequential) {
-//   const inputTensor = tf.tensor([inputValue]);
-//   const prediction = model.predict(inputTensor) as tf.Tensor;
-//   return prediction;
-// }
-
-// export function visMakePrediction(inputValue: number, model: tf.Sequential): any {
-//   const inputTensor = tf.tensor([inputValue]);
-//   const prediction = model.predict(inputTensor) as tf.Tensor;
-//   return prediction.dataSync();
-// }
-
-// export function startTraining(functionType: string, model: tf.Sequential, maxX: number, minX: number, pointCount: number, epochs: number, batchSize: number, framerate: number) {
-//   if (myChart) {
-//     myChart.destroy();
-//   }
-//   const [xData, yData] = createData(functionType, maxX, minX, pointCount);
-//   const trainingPreview = document.getElementById('progress') as HTMLParagraphElement;
-//   model.compile({
-//     optimizer: tf.train.adam(),
-//     loss: 'meanSquaredError',
-//     metrics: ['mse'],
-//   });
-
-//   const predictions: number[] = [];
-//   const temp: number[] = Array.from(xData.dataSync());
-//   let xValuesForPlotting: number[] = []; 
-//   for (let i = 0; i < temp.length; i++) {
-//     const val: number = temp[temp.length - i - 1]; 
-//     const secondary: string = val.toFixed(2); 
-//     const final: number = +secondary;
-//     xValuesForPlotting.push(final);
-//   }
-
-//   const printMSECallback = {
-//     onEpochEnd: async (epoch: number, logs: tf.Logs) => {
-//       trainingPreview.innerText = `Epoch: ${epoch}`;
-
-//       // Save predictions every 20 epochs
-//       if ((epoch + 1) % framerate === 0) {
-//         const predictionsAtEpoch: number[] = [];
-//         xData.dataSync().forEach((inputValue, index) => {
-//           const prediction = makePrediction(inputValue, model);
-//           prediction.data().then(predictedValue => {
-//             predictionsAtEpoch.push(predictedValue[0]);
-//           });
-//         });
-//         predictions.push(predictionsAtEpoch);
-//       }
-//     },
-//   };
-
-//   model.fit(xData, yData, {
-//     epochs: epochs,
-//     batchSize: batchSize,
-//     shuffle: true,
-//     callbacks: [printMSECallback],
-//   }).then(info => {
-//       trainingPreview.innerText = `Finished Training`;
-//       // After training, plot the results using Chart.js
-//       const ctx = document.getElementById('myChart') as HTMLCanvasElement;
-//       const chartData = {
-//         labels: xValuesForPlotting,
-//         datasets: [{
-//           label: 'Training Data (Base Function)',
-//           data: Array.from(yData.dataSync()),
-//           borderColor: 'rgb(75, 192, 192)',
-//           backgroundColor: 'rgba(75, 192, 192, 0.2)',
-//           fill: false,
-//           tension: 0.1
-//         }]
-//       };
-//       predictions.forEach((predictionSet, epochIndex) => {
-//         const colors = getRandomRedColor();
-//         chartData.datasets.push({
-//           label: `Epoch ${framerate * (epochIndex + 1)} Predictions`,
-//           data: predictionSet,
-//           borderColor: colors.borderColor,
-//           backgroundColor: colors.backgroundColor,
-//           fill: false,
-//           tension: 0.1
-//         });
-//       });
-
-//       myChart = new Chart(ctx, {
-//         type: 'line',
-//         data: chartData,
-//         options: {
-//           responsive: true,
-//           aspectRatio: 1,
-//           plugins: {
-//             title: {
-//               display: true,
-//               text: 'Model Training and Predictions'
-//             },
-//             decimation: {
-//               enabled: true,
-//               algorithm: 'lttb',
-//             },
-//           },
-//           scales: {
-//             x: {
-//               type: 'linear',
-//               title: {
-//                 display: true, // Display x-axis title
-//                 text: 'X Values'
-//               },
-//               grid: {
-//                 drawOnChartArea: true, // Enable grid lines across the chart area
-//                 color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-//                 lineWidth: 1, // Set grid line width
-//               },
-//               ticks: {
-//                 stepSize: 1, // Control tick spacing (optional)
-//               },
-//             },
-//             y: {
-//               type: 'linear',
-//               title: {
-//                 display: true, // Display y-axis title
-//                 text: 'Y Values'
-//               },
-//               grid: {
-//                 drawOnChartArea: true, // Enable grid lines across the chart area
-//                 color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-//                 lineWidth: 1, // Set grid line width
-//               },
-//               ticks: {
-//                 stepSize: 1, // Customize tick intervals for the y-axis (optional)
-//               },
-//             },
-//           },
-//         },
-//       });
-//     });
-// }
-
