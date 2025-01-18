@@ -1,4 +1,7 @@
-// import * as tf from "@tensorflow/tfjs";
+import * as tf from "@tensorflow/tfjs";
+import * as tfModels from "@tensorflow-models/knn-classifier";
+import Chart, { LinearScale, type ChartData, type Point } from 'chart.js/auto';
+let myChart: Chart | null = null;
 // import Chart, { LinearScale } from 'chart.js/auto';
 // let myChart: Chart | null = null;
 // function getRandomRedColor(): { borderColor: string; backgroundColor: string } {
@@ -11,69 +14,103 @@
 //     backgroundColor: `rgba(${red}, ${green}, ${blue}, 1)`,
 //   };
 // }
-export function createData(functionType: string, pointCount: number) {
-  if (functionType === "shotgun") {
-    const data = []; // Array to hold points and labels
 
-    // Generate random points and labels
-    for (let i = 0; i < pointCount; i++) {
-      // Generate random x and y values (can adjust the range if needed)
-      const x = Math.random();  // Random x value between 0 and 1
-      const y = Math.random();  // Random y value between 0 and 1
-
-      // Classify the point based on its position relative to y = x
-      const label = y > x ? 1 : 0;  // Points above the line y = x are labeled 1, below are 0
-
-      // Add the point and label to the dataset
-      data.push({ 
-        x: [x, y],   // Feature vector [x, y]
-        y: label      // Label (1 or 0)
-      });
-    }
-    return data;
-  } else if (functionType === "td") {
-    const data = []; // Array to hold points and labels
-
-    // Generate random points and labels
-    for (let i = 0; i < pointCount; i++) {
-      // Generate random x and y values (can adjust the range if needed)
-      const x = Math.random();  // Random x value between 0 and 1
-      const y = Math.random();  // Random y value between 0 and 1
-
-      // Classify the point based on its position relative to y = x
-      const label = y > 0.5 ? 1 : 0;  // Points above the line y = x are labeled 1, below are 0
-
-      // Add the point and label to the dataset
-      data.push({ 
-        x: [x, y],   // Feature vector [x, y]
-        y: label      // Label (1 or 0)
-      });
-    }
-
-    return data;
-  } else if (functionType === "lr") {
-    const data = []; // Array to hold points and labels
-
-    // Generate random points and labels
-    for (let i = 0; i < pointCount; i++) {
-      // Generate random x and y values (can adjust the range if needed)
-      const x = Math.random();  // Random x value between 0 and 1
-      const y = Math.random();  // Random y value between 0 and 1
-
-      // Classify the point based on its position relative to y = x
-      const label = x > 0.5 ? 1 : 0;  // Points above the line y = x are labeled 1, below are 0
-
-      // Add the point and label to the dataset
-      data.push({ 
-        x: [x, y],   // Feature vector [x, y]
-        y: label      // Label (1 or 0)
-      });
-    }
-    return data;
+/**
+ * Generates data points and adds them to the provided KNN classifier.
+ *
+ * @param functionType Type of function to generate data points ('shotgun', 'td', 'lr').
+ * @param pointCount Number of data points to generate.
+ * @param classifier The KNN classifier to add data points to.
+ */
+export function createData(functionType: string, pointCount: number, classifier: tfModels.KNNClassifier) {
+  if (!classifier || typeof classifier.addExample !== 'function') {
+    throw new Error("Invalid classifier provided.");
   }
-  alert("Error creating data");
-  return [];
+
+  const data = []; // Array to hold points and labels
+
+  for (let i = 0; i < pointCount; i++) {
+    // Generate random x and y values
+    const x = Math.random();  // Random x value between 0 and 1
+    const y = Math.random();  // Random y value between 0 and 1
+
+    let label: number;
+
+    if (functionType === "shotgun") {
+      // Classify the point based on its position relative to y = x
+      label = y > x ? 1 : 0;  // Points above the line y = x are labeled 1, below are 0
+    } else if (functionType === "td") {
+      // Classify the point based on its position relative to y = 0.5
+      label = y > 0.5 ? 1 : 0;  // Points above y = 0.5 are labeled 1, below are 0
+    } else if (functionType === "lr") {
+      // Classify the point based on its position relative to x = 0.5
+      label = x > 0.5 ? 1 : 0;  // Points where x > 0.5 are labeled 1, others are 0
+    } else {
+      alert("Error creating data");
+      return [];
+    }
+
+    // Create a feature tensor
+    const feature = tf.tensor([x, y]); // Feature vector [x, y]
+
+    // Add the feature and label to the classifier
+    classifier.addExample(feature, label);
+
+    // Optionally keep track of the data (useful for testing/debugging)
+    data.push({ x: [x, y], y: label });
+  }
+  console.log(classifier);
+
+  return data;
 }
+export function viewKNN(functionType: string, pointCount: number) {
+  const model = tfModels.create();
+  const chartData = { labels: [] as string[], datasets: [{}] };
+  createData(functionType, pointCount, model);
+  const dataset = model.getClassifierDataset();
+
+  // Colors for each class
+  const colors = ['red', 'blue', 'green', 'orange', 'purple'];
+
+  Object.keys(dataset).forEach((classLabel, index) => {
+    const tensor = dataset[classLabel]; // Get the tensor for this class
+    const examples = tensor.arraySync(); // Convert tensor to array
+
+    // Create a dataset for this class
+    chartData.datasets.push({
+      label: `Class ${classLabel}` as string,
+      datasets: examples.map(([x, y]: number[]) => ({ x, y })),
+      backgroundColor: colors[index % colors.length], // Cycle through colors
+    });
+  });
+  const ctx = document.getElementById('chart') as HTMLCanvasElement;
+  if (!ctx) {
+    console.error("Canvas element with id 'chart' not found");
+    return;
+  }
+  if (myChart) {
+    myChart.destroy();
+  }
+}
+  // myChart = new Chart(ctx, {
+  //   type: 'scatter',
+  //   data: chartData,
+  //   options: {
+  //     responsive: true,
+  //     scales: {
+  //       x: {
+  //         type: 'linear',
+  //         position: 'bottom',
+  //         title: { display: true, text: 'X Coordinate' },
+  //       },
+  //       y: {
+  //         title: { display: true, text: 'Y Coordinate' },
+  //       },
+  //     },
+  //   },
+  // });
+// }
+
 
 // export function makePrediction(inputValue: number, model: tf.Sequential) {
 //   const inputTensor = tf.tensor([inputValue]);

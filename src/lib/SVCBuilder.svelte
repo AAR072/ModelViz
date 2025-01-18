@@ -8,7 +8,7 @@ let epsilon: number = $state(0);
 let pointCount: number = $state(1);
 let gamma: number = $state(0);
 let degree: number = $state(0);
-let { dataset } = $props();
+let { dataset } = $props() as {dataset: string};
 alert(dataset);
 
 </script>
@@ -54,6 +54,7 @@ alert(dataset);
     Start Training
   </button>
 </div>
+<canvas id="chart" width="400" height="400"></canvas>
 <style>
 @import '$lib/styles/main.css';
 .boton-elegante {
