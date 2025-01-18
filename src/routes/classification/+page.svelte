@@ -50,7 +50,7 @@ function chooseDataset(dataType: string) {
   <div id="firstStage" class:fade-in={stages[0]} class:hidden={!stages[0]}>
     <div class="goodDiv">
       <p id="pageTitle" class:fade-in={titleVisible} class:hidden={!titleVisible}>ModelViz</p>
-      <p id="pageSubtitle" class:fade-in={subtitleVisible} class:hidden={!subtitleVisible}>Choose a dataset to classify</p>
+      <p id="pageSubtitle" class:fade-in={subtitleVisible} class:hidden={!subtitleVisible}>Choose a relation to classify</p>
     </div>
     <div class="allCardContainer">
       <div class="card-container">
@@ -102,7 +102,7 @@ function chooseDataset(dataType: string) {
             <circle cx="110" cy="130" r="4" fill="#eb4034" />
             <circle cx="130" cy="170" r="4" fill="#eb4034" />
           </svg>
-          <p class="card-text">Top-Down</p>
+          <p class="card-text">y = 0.5 + x</p>
         </div>
       </div>
       <div class="card-container">
@@ -154,7 +154,7 @@ function chooseDataset(dataType: string) {
             <circle cx="130" cy="110" r="4" fill="#eb4034" />
             <circle cx="170" cy="130" r="4" fill="#eb4034" />
           </svg>
-          <p class="card-text">Left-Right</p>
+          <p class="card-text">x = 0</p>
         </div>
       </div>
 
@@ -205,7 +205,7 @@ function chooseDataset(dataType: string) {
             <circle cx="80" cy="190" r="4" fill="#eb4034" />
             <circle cx="159" cy="180" r="4" fill="#eb4034" />
           </svg>
-          <p class="card-text">Shotgun</p>
+          <p class="card-text">y = x</p>
         </div>
       </div>
     </div>
