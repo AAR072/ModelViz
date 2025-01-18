@@ -1,6 +1,7 @@
 <script lang="ts">
 import {
   createData,
+  viewKNN,
 } from '$lib/svm';
 let kernel:string = $state("linear");
 let regularization: number = $state(0);
@@ -50,7 +51,7 @@ alert(dataset);
       <input class="unitInput" type="number" bind:value={degree} min="0" />
     </label>
   </div>
-  <button class="boton-elegante" id="greenElon" on:click={() => createData(dataset, pointCount)}>
+  <button class="boton-elegante" id="greenElon" on:click={() => viewKNN(dataset, pointCount)}>
     Start Training
   </button>
 </div>
