@@ -161,68 +161,6 @@ function goToClustering() {
     </div>
   </div>
 
-  <div class="card-container">
-    <div class="card" class:fade-in={card3Visible} class:hidden={!card3Visible} onclick={goToClustering}>
-      <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="lightgrey" stroke-width="0.5">
-          <!-- Vertical gridlines -->
-          <line x1="25" y1="0" x2="25" y2="250" />
-          <line x1="50" y1="0" x2="50" y2="250" />
-          <line x1="75" y1="0" x2="75" y2="250" />
-          <line x1="100" y1="0" x2="100" y2="250" />
-          <line x1="125" y1="0" x2="125" y2="250" />
-          <line x1="150" y1="0" x2="150" y2="250" />
-          <line x1="175" y1="0" x2="175" y2="250" />
-          <line x1="200" y1="0" x2="200" y2="250" />
-          <line x1="225" y1="0" x2="225" y2="250" />
-
-          <!-- Horizontal gridlines -->
-          <line x1="0" y1="1" x2="250" y2="1" />
-          <line x1="0" y1="25" x2="250" y2="25" />
-          <line x1="0" y1="50" x2="250" y2="50" />
-          <line x1="0" y1="75" x2="250" y2="75" />
-          <line x1="0" y1="100" x2="250" y2="100" />
-          <line x1="0" y1="125" x2="250" y2="125" />
-          <line x1="0" y1="150" x2="250" y2="150" />
-          <line x1="0" y1="175" x2="250" y2="175" />
-          <line x1="0" y1="200" x2="250" y2="200" />
-          <line x1="0" y1="225" x2="250" y2="225" />
-          <line x1="0" y1="250" x2="250" y2="250" />
-        </g>
-        <!-- Axes -->
-        <line x1="0" y1="250" x2="250" y2="250" stroke="white" stroke-width="2" /> <!-- X-axis -->
-        <line x1="0" y1="0" x2="0" y2="250" stroke="white" stroke-width="2" /> <!-- Y-axis -->
-
-        <!-- Pink Points -->
-        <circle cx="170" cy="60" r="4" fill="#eb34a7" />
-        <circle cx="160" cy="80" r="4" fill="#eb34a7" />
-        <circle cx="180" cy="75" r="4" fill="#eb34a7" />
-
-        <!-- Cyan Points -->
-        <circle cx="30" cy="150" r="4" fill="#34ebf2" />
-        <circle cx="50" cy="160" r="4" fill="#34ebf2" />
-        <circle cx="70" cy="140" r="4" fill="#34ebf2" />
-
-
-        <!-- Blue Points -->
-        <circle cx="18" cy="30" r="4" fill="#3477eb" />
-        <circle cx="30" cy="40" r="4" fill="#3477eb" />
-        <circle cx="42" cy="25" r="4" fill="#3477eb" />
-
-        <!-- Yellow Points -->
-        <circle cx="130" cy="150" r="4" fill="#e8cb0c" />
-        <circle cx="118" cy="160" r="4" fill="#e8cb0c" />
-        <circle cx="142" cy="145" r="4" fill="#e8cb0c" />
-
-
-        <!-- Red Points -->
-        <circle cx="118" cy="210" r="4" fill="#eb4034" />
-        <circle cx="145" cy="220" r="4" fill="#eb4034" />
-        <circle cx="130" cy="240" r="4" fill="#eb4034" />
-      </svg>
-      <p class="card-text">Clustering</p>
-    </div>
-  </div>
 </div>
 
 <style>

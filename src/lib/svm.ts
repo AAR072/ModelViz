@@ -54,6 +54,8 @@ export function viewKNN(functionType: string, pointCount: number) {
   // 1. Create the dataset that we need to input
   let redArray: number[][] = [];
   let blueArray: number[][] = [];
+  let whiteArray: number[][] = [];
+
   for (let i = 0; i < predictionSet.length; i++) {
     if (predictionSet[i].y === 0) {
       redArray.push(predictionSet[i].x);
@@ -61,6 +63,30 @@ export function viewKNN(functionType: string, pointCount: number) {
       blueArray.push(predictionSet[i].x);
     }
   }
+
+  // Generate 100 white points based on the functionType logic
+  for (let i = 1; i < 100; i++) {
+    let x = i / 100;
+    let y = 0;
+
+    if (functionType === "shotgun") {
+      y = x;
+    }
+    if (functionType === "td") {
+      y = 0.5;
+    }
+    if (functionType === "lr") {
+      y = x;
+      x = 0.5;
+    }
+
+    // Ensure points remain within bounds [0, 1]
+    x = Math.min(Math.max(x, 0), 1);
+    y = Math.min(Math.max(y, 0), 1);
+
+    whiteArray.push([x, y, 2]);
+  }
+
   async function processPredictions() {
     // Store promises for redArray predictions
     const redPromises = redArray.map((item, i) => {
@@ -87,7 +113,7 @@ export function viewKNN(functionType: string, pointCount: number) {
     // 2. Make predictions and store.
     // 3. Add to data and label
     // Colors for each class
-    const colors = ['red', 'blue', 'green', 'orange', 'purple'];
+    const colors = ['red', 'blue', 'white'];
 
     // Create a dataset for this class
     for (let i = 0; i < redArray.length; i++) {
@@ -104,6 +130,14 @@ export function viewKNN(functionType: string, pointCount: number) {
         backgroundColor: colors[+blueArray[i][2]], // Cycle through colors
       });
     }
+    for (let i = 0; i < whiteArray.length; i++) {
+      chartData.datasets.push({
+        label: `${whiteArray[i][2]}` as string,
+        data: [{x: whiteArray[i][0], y: whiteArray[i][1]}],
+        backgroundColor: colors[+whiteArray[i][2]], // Cycle through colors
+      });
+    }
+    console.log(redArray,blueArray,whiteArray);
     const ctx = document.getElementById('chart') as HTMLCanvasElement;
     if (!ctx) {
       console.error("Canvas element with id 'chart' not found");
