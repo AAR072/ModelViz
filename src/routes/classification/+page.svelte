@@ -48,7 +48,7 @@ function chooseDataset(dataType: string) {
 <svelte:window bind:innerWidth />
 {#if firstDiv}
   <div id="firstStage" class:fade-in={stages[0]} class:hidden={!stages[0]}>
-    <div class="goodDiv">
+    <div class="essentialDiv">
       <p id="pageTitle" class:fade-in={titleVisible} class:hidden={!titleVisible}>ModelViz</p>
       <p id="pageSubtitle" class:fade-in={subtitleVisible} class:hidden={!subtitleVisible}>Choose a relation to classify</p>
     </div>

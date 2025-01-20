@@ -20,7 +20,7 @@ let { functionType, model } = $props() as {functionType: string, model: tf.Seque
 
 </script>
 
-<div class="goodDiv">
+<div class="essentialDiv">
   <p id="pageTitle">Training Parameters</p>
   <div class="trainingParams">
     <label>

@@ -84,7 +84,7 @@ function exportModel() {
 <!-- Main UI -->
 {#if !secondReady}
   <!-- content here -->
-  <div class="goodDiv" class:fade-in={!readyToTrain} class:hidden={readyToTrain}>
+  <div class="essentialDiv" class:fade-in={!readyToTrain} class:hidden={readyToTrain}>
     <h1 id="pageTitle" style="padding-bottom: 4vh;">Model Builder</h1>
 
     <!-- Add Layer Button -->
