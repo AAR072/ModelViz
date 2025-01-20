@@ -218,7 +218,6 @@ display: block;
 .fade-in {
 opacity: 1;
 transition: opacity 1s ease-in-out,transform 0.3s ease, box-shadow 0.3s ease;
-
 }
 
 .hidden {

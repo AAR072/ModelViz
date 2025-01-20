@@ -84,9 +84,12 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
   const printMSECallback = {
     onEpochEnd: async (epoch: number, logs: tf.Logs) => {
       trainingPreview.innerText = `Epoch: ${epoch}`;
-
+      const colors = ['red', 'orange', 'yellow', 'green', 'purple', 'pink', 'white'];
       // Save predictions every 20 epochs
       if ((epoch + 1) % framerate === 0) {
+        if (myChart) {
+          myChart.destroy();
+        }
         const predictionsAtEpoch: number[] = [];
         xData.dataSync().forEach((inputValue, index) => {
           const prediction = makePrediction(inputValue, model);
@@ -95,6 +98,80 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
           });
         });
         predictions.push(predictionsAtEpoch);
+      // After training, plot the results using Chart.js
+      const ctx = document.getElementById('myChart') as HTMLCanvasElement;
+      const chartData = {
+        labels: xValuesForPlotting,
+        datasets: [{
+          label: 'Training Data (Base Function)',
+          data: Array.from(yData.dataSync()),
+          borderColor: 'rgb(75, 192, 192)',
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          fill: false,
+          tension: 0.1
+        }]
+      };
+      predictions.forEach((predictionSet, epochIndex) => {
+        chartData.datasets.push({
+          label: `Epoch ${framerate * (epochIndex + 1)} Predictions`,
+          data: predictionSet,
+          borderColor: colors[epochIndex % colors.length],
+          backgroundColor: colors[epochIndex % colors.length],
+          fill: false,
+          tension: 0.1
+        });
+      });
+
+      myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+          responsive: true,
+          aspectRatio: 1,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Model Training and Predictions'
+            },
+            decimation: {
+              enabled: true,
+              algorithm: 'lttb',
+            },
+          },
+          scales: {
+            x: {
+              type: 'linear',
+              title: {
+                display: true, // Display x-axis title
+                text: 'X Values'
+              },
+              grid: {
+                drawOnChartArea: true, // Enable grid lines across the chart area
+                color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
+                lineWidth: 1, // Set grid line width
+              },
+              ticks: {
+                stepSize: 1, // Control tick spacing (optional)
+              },
+            },
+            y: {
+              type: 'linear',
+              title: {
+                display: true, // Display y-axis title
+                text: 'Y Values'
+              },
+              grid: {
+                drawOnChartArea: true, // Enable grid lines across the chart area
+                color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
+                lineWidth: 1, // Set grid line width
+              },
+              ticks: {
+                stepSize: 1, // Customize tick intervals for the y-axis (optional)
+              },
+            },
+          },
+        },
+      });
       }
     },
   };
@@ -105,6 +182,9 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
     shuffle: true,
     callbacks: [printMSECallback],
   }).then(info => {
+      if (myChart) {
+        myChart.destroy();
+      }
       trainingPreview.innerText = `Finished Training`;
       // After training, plot the results using Chart.js
       const ctx = document.getElementById('myChart') as HTMLCanvasElement;
