@@ -1,13 +1,13 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
-let innerWidth = $state(0);
-let onPC = $derived(innerWidth > 768);
-let titleVisible = $state(false);
-let subtitleVisible = $state(false);
-let card1Visible = $state(false);
-let card2Visible = $state(false);
-let card3Visible = $state(false);
+let innerWidth: number = $state(0);
+let titleVisible: boolean = $state(false);
+let subtitleVisible: boolean = $state(false);
+let card1Visible: boolean = $state(false);
+let card2Visible: boolean = $state(false);
+let card3Visible: boolean = $state(false);
+// make everything fade in
 onMount(() => {
   setTimeout(() => {
     titleVisible = true;
@@ -25,6 +25,7 @@ onMount(() => {
     card3Visible = true;
   }, 4500);
 });
+// change the page slowly
 function goToRegression() {
   titleVisible = false;
   subtitleVisible = false;
@@ -43,16 +44,6 @@ function goToClassification() {
   card3Visible = false;
   setTimeout(() => {
     goto('/classification');
-  }, 1000);
-}
-function goToClustering() {
-  titleVisible = false;
-  subtitleVisible = false;
-  card1Visible = false;
-  card2Visible = false;
-  card3Visible = false;
-  setTimeout(() => {
-    goto('/clustering');
   }, 1000);
 }
 </script>

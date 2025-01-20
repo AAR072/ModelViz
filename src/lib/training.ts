@@ -200,12 +200,12 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
         }]
       };
       predictions.forEach((predictionSet, epochIndex) => {
-        const colors = getRandomRedColor();
+        const colors = ['red', 'orange', 'yellow', 'green', 'purple', 'pink', 'white'];
         chartData.datasets.push({
           label: `Epoch ${framerate * (epochIndex + 1)} Predictions`,
           data: predictionSet,
-          borderColor: colors.borderColor,
-          backgroundColor: colors.backgroundColor,
+          borderColor: colors[epochIndex % colors.length],
+          backgroundColor: colors[epochIndex % colors.length],
           fill: false,
           tension: 0.1
         });
