@@ -18,7 +18,7 @@ export function createData(functionType: string, maxX: number, minX: number, poi
     for (let i = 0; i < pointCount; i++) {
       xValues.push(minX + i * step);
     }
-    const yValues = xValues.map(x => Math.sin(x));
+    const yValues = xValues.map(x => -Math.sin(x));
     const xTensor = tf.tensor(xValues);
     const yTensor = tf.tensor(yValues);
     return [xTensor, yTensor];
@@ -28,7 +28,7 @@ export function createData(functionType: string, maxX: number, minX: number, poi
     for (let i = 0; i < pointCount; i++) {
       xValues.push(minX + i * step);
     }
-    const yValues = xValues.map(x => Math.pow(2,x));
+    const yValues = xValues.map(x => Math.pow(2,-x));
     const xTensor = tf.tensor(xValues);
     const yTensor = tf.tensor(yValues);
     return [xTensor, yTensor];
