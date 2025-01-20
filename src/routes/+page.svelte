@@ -162,21 +162,21 @@ padding-bottom: 5vh;
 display: flex;
 flex-direction: column;
 align-items: center;
-text-align: center; /* Center the text under the card */
+text-align: center; 
 }
 .card:hover {
 transform: scale(1.2);
-box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8); /* White glow effect */
+box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.8); 
 }
 
 .card {
-box-shadow: 0px 0px 0px rgba(255, 255, 255, 0); /* Initial shadow is none */
+box-shadow: 0px 0px 0px rgba(255, 255, 255, 0); 
 padding-top: 2vh;
 padding-left: 2vw;
 padding-right: 2vw;
 background-color: #171717;
 border-radius: 12px;
-width: 20vw; /* Adjust width as needed */
+width: 20vw; 
 height: auto;
 display: inline-block;
 vertical-align: top;
