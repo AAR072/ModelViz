@@ -48,7 +48,7 @@ function goToClassification() {
 }
 </script>
 <svelte:window bind:innerWidth />
-<div class="goodDiv">
+<div class="essentialDiv">
   <p id="pageTitle" class:fade-in={titleVisible} class:hidden={!titleVisible}>ModelViz</p>
   <p id="pageSubtitle" class:fade-in={subtitleVisible} class:hidden={!subtitleVisible}>Choose a problem to visualize</p>
 </div>

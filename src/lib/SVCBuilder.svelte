@@ -13,7 +13,7 @@ let { dataset } = $props() as {dataset: string};
 
 </script>
 
-<div class="goodDiv">
+<div class="essentialDiv">
   <p id="pageTitle">Model Parameters</p>
   <div class="trainingParams">
     <label>
