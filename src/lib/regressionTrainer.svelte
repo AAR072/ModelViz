@@ -14,7 +14,7 @@
 
   const { functionType, model } = $props() as { functionType: string; model: tf.Sequential };
 
-  let trainer: ModelTrainer = $derived(new ModelTrainer(model, snapshotRate));
+  const trainer: ModelTrainer = $derived(new ModelTrainer(model, snapshotRate));
   let visualizer: LineChartVisualization;
 
   onMount(() => {
