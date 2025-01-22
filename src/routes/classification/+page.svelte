@@ -2,11 +2,11 @@
 import { onMount } from 'svelte';
 import SVCBuilder from '$lib/SVCBuilder.svelte';
 let innerWidth = $state(0);
-let onPC = $derived(innerWidth > 768);
+const onPC = $derived(innerWidth > 768);
 let titleVisible = $state(false);
 let subtitleVisible = $state(false);
-let cards: boolean [] = $state([]);
-let stages: boolean [] = $state([true]);
+const cards: boolean [] = $state([]);
+const stages: boolean [] = $state([true]);
 let firstDiv = $state(true);
 let secondDiv = $state(false);
 let stagesPtr = 0;

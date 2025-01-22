@@ -1,15 +1,15 @@
 <script lang="ts">
 import {
   createData,
-  viewKNN,
+  viewKNN
 } from '$lib/svm';
-let kernel:string = $state("linear");
-let regularization: number = $state(0);
-let epsilon: number = $state(0);
+const kernel:string = $state("linear");
+const regularization: number = $state(0);
+const epsilon: number = $state(0);
 let pointCount: number = $state(100);
-let gamma: number = $state(0);
-let degree: number = $state(0);
-let { dataset } = $props() as {dataset: string};
+const gamma: number = $state(0);
+const degree: number = $state(0);
+const { dataset } = $props() as {dataset: string};
 
 </script>
 

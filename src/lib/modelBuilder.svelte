@@ -1,14 +1,14 @@
 <script lang="ts">
 import { writable } from "svelte/store";
-import RegressionTrainer from "$lib/regressionTrainer.svelte"
+import RegressionTrainer from "$lib/regressionTrainer.svelte";
 import * as tf from "@tensorflow/tfjs"; // TensorFlow.js
 
-let { functionType } = $props();
+const { functionType } = $props();
 let readyToTrain: boolean = $state(false);
 let secondReady: boolean = $state(false);
 
 // Store for layers
-let layers = writable([]);
+const layers = writable([]);
 
 
 
@@ -16,21 +16,21 @@ let layers = writable([]);
 let model: tf.Sequential | null = null;
 layers.update((current) => [
   ...current,
-  { type: "dense", units: 32, activation: "relu", inputShape: "[1]" },
+  { type: "dense", units: 32, activation: "relu", inputShape: "[1]" }
 ]);
 
 // Add a new layer to the list
 function addLayer() {
   layers.update((current) => [
     ...current,
-    {  units: 32, activation: "relu", inputShape: "" },
+    {  units: 32, activation: "relu", inputShape: "" }
   ]);
 }
 
 function useDefaults() {
   layers.update((current) => [
     { units: 64, activation: "tanh", inputShape: "[1]" },
-    { units: 64, activation: "tanh", inputShape: "" },
+    { units: 64, activation: "tanh", inputShape: "" }
   ]);
 }
 
