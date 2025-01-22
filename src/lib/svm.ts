@@ -4,7 +4,7 @@ import Chart from "chart.js/auto";
 
 // Abstract Base Class for Data Generation
 abstract class DataGenerator {
-  abstract generateData(pointCount: number): { x: number[]; y: number[]; label: number }[];
+  public abstract generateData(pointCount: number): { x: number[]; y: number[]; label: number }[];
 
   protected createFeature(x: number, y: number): tf.Tensor {
     return tf.tensor([x, y]);
@@ -56,7 +56,9 @@ class KNNVisualizer {
   
   constructor(private ctx: HTMLCanvasElement) {
 
-  }
+  };
+
+  
 
   private chart: Chart | null = null;
 
