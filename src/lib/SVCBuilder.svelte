@@ -1,26 +1,47 @@
 <script lang="ts">
-import {
-  viewKNN
-} from '$lib/svm';
-let pointCount: number = $state(100);
-const { dataset } = $props() as {dataset: string};
+  import { onMount } from 'svelte';
+  import { KNNApp } from '$lib/svm';  // Path to the KNNApp class (import the class from your updated OOP code)
 
+  let pointCount = $state(100);  // Default point count
+  let chartReady = $state(false);  // Flag to determine when the chart should be rendered
+
+  let knnApp: KNNApp;
+
+  // Extract functionType from the props
+  const { dataset } = $props() as { dataset: string };
+
+  // Initialize the KNN app and render on mount
+  onMount(() => {
+    knnApp = new KNNApp(document.getElementById('chart'));
+    knnApp.run(dataset, pointCount);  // Use the dataset passed from the parent component
+    chartReady = true;
+  });
+
+  // Function to handle the form submission and trigger KNN
+  function updateChart() {
+    knnApp.run(dataset, pointCount);  // Use the dataset passed from the parent component
+  }
 </script>
 
 <div class="essentialDiv">
-  <p id="pageTitle">Model Parameters</p>
-  <div class="trainingParams">
-    <label>
-      Datapoint count:
-      <input class="unitInput" type="number" bind:value={pointCount} min="1" step="any" />
-    </label>
-    <br>
+  <h1>KNN Visualizer</h1>
+
+  <!-- Controls to change the point count -->
+  <div>
+    <label for="pointCount">Select Number of Points:</label>
+    <input
+      id="pointCount"
+      type="number"
+      bind:value={pointCount}
+      min="1"
+      max="1000"
+      on:change={updateChart}
+    />
   </div>
-  <button class="boton-elegante" id="greenElon" onclick={() => viewKNN(dataset, pointCount)}>
-    Start Training
-  </button>
+
+  <!-- The Canvas element for the chart -->
+  <canvas id="chart" width="400" height="400"></canvas>
 </div>
-<canvas id="chart" width="400" height="400"></canvas>
 <style>
 @import '$lib/styles/main.css';
 .boton-elegante {
