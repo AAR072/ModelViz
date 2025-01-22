@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { DataGenerator, ModelTrainer, Visualization } from "$lib/training";
+  import { DataGenerator, ModelTrainer, LineChartVisualization} from "$lib/training";
   import * as tf from "@tensorflow/tfjs"; // Ensure this matches the TensorFlow version used in training.ts
   import { onMount } from 'svelte';
 
@@ -15,15 +15,14 @@
   const { functionType, model } = $props() as { functionType: string; model: tf.Sequential };
 
   let trainer: ModelTrainer = $derived(new ModelTrainer(model, snapshotRate));
-  let visualizer: Visualization;
+  let visualizer: LineChartVisualization;
 
   onMount(() => {
-    visualizer = new Visualization();
+    visualizer = new LineChartVisualization();
   });
 
   async function startTraining(
     functionType: string,
-    model: tf.Sequential,
     minX: number,
     maxX: number,
     pointCount: number,
@@ -110,7 +109,7 @@
     class="boton-elegante"
     id="greenElon"
     on:click={() =>
-      startTraining(functionType, model, minX, maxX, pointCount, epochs + 1, batchSize, snapshotRate)
+      startTraining(functionType, minX, maxX, pointCount, epochs + 1, batchSize, snapshotRate)
     }
   >
     Start Training
