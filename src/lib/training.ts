@@ -83,43 +83,47 @@ export class ModelTrainer {
   }
 }
 
-export class Visualization {
-  private chart: Chart | null = null;
+abstract class BaseVisualization {
+  protected chart: Chart | null = null;
 
-  private destroyChart(): void {
+  destroyChart(): void {
     if (this.chart) {
       this.chart.destroy();
     }
   }
 
-  public plot(
+  abstract plot(
+    xValues: number[],
+    yValues: number[],
+    predictions: number[][],
+    framerate: number
+  ): void;
+}
+
+export class LineChartVisualization extends BaseVisualization {
+  plot(
     xValues: number[],
     yValues: number[],
     predictions: number[][],
     framerate: number
   ): void {
     const ctx: HTMLCanvasElement = document.getElementById("myChart") as HTMLCanvasElement;
-
-    const datasets: { label: string; data: number[]; borderColor: string; backgroundColor: string; fill: boolean; tension: number; }[] = [
+    const datasets = [
       {
-        label: "Training Data (Base Function)",
+        label: "Training Data",
         data: yValues,
         borderColor: "rgb(75, 192, 192)",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
         fill: false,
-        tension: 0.1,
       },
     ];
 
-    const colors: string[] = ["red", "orange", "yellow", "green", "purple", "pink", "white"];
-    predictions.forEach((predictionSet, index) => {
+    const colors = ["red", "orange", "yellow", "green", "purple"];
+    predictions.forEach((prediction, index) => {
       datasets.push({
-        label: `Epoch ${framerate * (index + 1)} Predictions`,
-        data: predictionSet,
+        label: `Epoch ${framerate * (index + 1)}`,
+        data: prediction,
         borderColor: colors[index % colors.length],
-        backgroundColor: colors[index % colors.length],
         fill: false,
-        tension: 0.1
       });
     });
 
@@ -127,19 +131,33 @@ export class Visualization {
     this.chart = new Chart(ctx, {
       type: "line",
       data: { labels: xValues, datasets },
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: "Model Training and Predictions",
-          },
-        },
-        scales: {
-          x: { title: { display: true, text: "X Values" } },
-          y: { title: { display: true, text: "Y Values" } },
-        },
+      options: { responsive: true },
+    });
+  }
+}
+
+// May need this for visualizing model loss in the future
+class ScatterChartVisualization extends BaseVisualization {
+  plot(
+    xValues: number[],
+    yValues: number[],
+    predictions: number[][],
+    framerate: number
+  ): void {
+    const ctx: HTMLCanvasElement = document.getElementById("myChart") as HTMLCanvasElement;
+    const datasets = [
+      {
+        label: "Training Data",
+        data: yValues.map((y, i) => ({ x: xValues[i], y })),
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
       },
+    ];
+
+    this.destroyChart();
+    this.chart = new Chart(ctx, {
+      type: "scatter",
+      data: { datasets },
+      options: { responsive: true },
     });
   }
 }
