@@ -50,11 +50,11 @@ export function viewKNN(functionType: string, pointCount: number) {
   const chartData = { 
     labels: ["Red Points","Blue Points"] as string[], 
     datasets: [] as { [key: string]: any }[]  // array of objects with string keys and any values
-  }
+  };
   // 1. Create the dataset that we need to input
-  let redArray: number[][] = [];
-  let blueArray: number[][] = [];
-  let whiteArray: number[][] = [];
+  const redArray: number[][] = [];
+  const blueArray: number[][] = [];
+  const whiteArray: number[][] = [];
 
   for (let i = 0; i < predictionSet.length; i++) {
     if (predictionSet[i].y === 0) {
@@ -120,21 +120,21 @@ export function viewKNN(functionType: string, pointCount: number) {
       chartData.datasets.push({
         label: `${redArray[i][2]}` as string,
         data: [{x: redArray[i][0], y: redArray[i][1]}],
-        backgroundColor: colors[+redArray[i][2]], // Cycle through colors
+        backgroundColor: colors[+redArray[i][2]] // Cycle through colors
       });
     }
     for (let i = 0; i < blueArray.length; i++) {
       chartData.datasets.push({
         label: `${blueArray[i][2]}` as string,
         data: [{x: blueArray[i][0], y: blueArray[i][1]}],
-        backgroundColor: colors[+blueArray[i][2]], // Cycle through colors
+        backgroundColor: colors[+blueArray[i][2]] // Cycle through colors
       });
     }
     for (let i = 0; i < whiteArray.length; i++) {
       chartData.datasets.push({
         label: `${whiteArray[i][2]}` as string,
         data: [{x: whiteArray[i][0], y: whiteArray[i][1]}],
-        backgroundColor: colors[+whiteArray[i][2]], // Cycle through colors
+        backgroundColor: colors[+whiteArray[i][2]] // Cycle through colors
       });
     }
     console.log(redArray,blueArray,whiteArray);
@@ -168,20 +168,20 @@ export function viewKNN(functionType: string, pointCount: number) {
             grid: {
               drawOnChartArea: true, // Enable grid lines across the chart area
               color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-              lineWidth: 1, // Set grid line width
-            },
+              lineWidth: 1 // Set grid line width
+            }
 
           },
           y: {
             grid: {
               drawOnChartArea: true, // Enable grid lines across the chart area
               color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-              lineWidth: 1, // Set grid line width
+              lineWidth: 1 // Set grid line width
             },
-            title: { display: true, text: 'Y Coordinate' },
-          },
-        },
-      },
+            title: { display: true, text: 'Y Coordinate' }
+          }
+        }
+      }
     });
     // You can proceed to the rest of the code here, knowing the predictions have been processed.
   }

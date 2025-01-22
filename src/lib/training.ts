@@ -8,7 +8,7 @@ function getRandomRedColor(): { borderColor: string; backgroundColor: string } {
 
   return {
     borderColor: `rgb(${red}, ${green}, ${blue})`,
-    backgroundColor: `rgba(${red}, ${green}, ${blue}, 1)`,
+    backgroundColor: `rgba(${red}, ${green}, ${blue}, 1)`
   };
 }
 export function createData(functionType: string, maxX: number, minX: number, pointCount: number): [tf.Tensor, tf.Tensor] {
@@ -68,12 +68,12 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
   model.compile({
     optimizer: tf.train.adam(),
     loss: 'meanSquaredError',
-    metrics: ['mse'],
+    metrics: ['mse']
   });
 
   const predictions: number[] = [];
   const temp: number[] = Array.from(xData.dataSync());
-  let xValuesForPlotting: number[] = []; 
+  const xValuesForPlotting: number[] = []; 
   for (let i = 0; i < temp.length; i++) {
     const val: number = temp[temp.length - i - 1]; 
     const secondary: string = val.toFixed(2); 
@@ -135,8 +135,8 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
             },
             decimation: {
               enabled: true,
-              algorithm: 'lttb',
-            },
+              algorithm: 'lttb'
+            }
           },
           scales: {
             x: {
@@ -148,11 +148,11 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
               grid: {
                 drawOnChartArea: true, // Enable grid lines across the chart area
                 color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-                lineWidth: 1, // Set grid line width
+                lineWidth: 1 // Set grid line width
               },
               ticks: {
-                stepSize: 1, // Control tick spacing (optional)
-              },
+                stepSize: 1 // Control tick spacing (optional)
+              }
             },
             y: {
               type: 'linear',
@@ -163,24 +163,24 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
               grid: {
                 drawOnChartArea: true, // Enable grid lines across the chart area
                 color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-                lineWidth: 1, // Set grid line width
+                lineWidth: 1 // Set grid line width
               },
               ticks: {
-                stepSize: 1, // Customize tick intervals for the y-axis (optional)
-              },
-            },
-          },
-        },
+                stepSize: 1 // Customize tick intervals for the y-axis (optional)
+              }
+            }
+          }
+        }
       });
       }
-    },
+    }
   };
 
   model.fit(xData, yData, {
     epochs: epochs,
     batchSize: batchSize,
     shuffle: true,
-    callbacks: [printMSECallback],
+    callbacks: [printMSECallback]
   }).then(info => {
       if (myChart) {
         myChart.destroy();
@@ -224,8 +224,8 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
             },
             decimation: {
               enabled: true,
-              algorithm: 'lttb',
-            },
+              algorithm: 'lttb'
+            }
           },
           scales: {
             x: {
@@ -237,11 +237,11 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
               grid: {
                 drawOnChartArea: true, // Enable grid lines across the chart area
                 color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-                lineWidth: 1, // Set grid line width
+                lineWidth: 1 // Set grid line width
               },
               ticks: {
-                stepSize: 1, // Control tick spacing (optional)
-              },
+                stepSize: 1 // Control tick spacing (optional)
+              }
             },
             y: {
               type: 'linear',
@@ -252,14 +252,14 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
               grid: {
                 drawOnChartArea: true, // Enable grid lines across the chart area
                 color: 'rgba(200, 200, 200, 0.2)', // Set grid line color
-                lineWidth: 1, // Set grid line width
+                lineWidth: 1 // Set grid line width
               },
               ticks: {
-                stepSize: 1, // Customize tick intervals for the y-axis (optional)
-              },
-            },
-          },
-        },
+                stepSize: 1 // Customize tick intervals for the y-axis (optional)
+              }
+            }
+          }
+        }
       });
 });
 }
