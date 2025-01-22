@@ -4,15 +4,15 @@ import {
   visMakePrediction
 } from '$lib/training';
 
-let epochs = $state(100);
-let batchSize = $state(64);
-let framerate = $state(3);
-let minX = $state(-6.28);
-let maxX = $state(6.28);
-let pointCount = $state(500);
-let prediction = $state(0);
-let answer: any = $state(0);
-const snapshotRate = $derived(Math.floor(epochs / framerate));
+let epochs: number = $state(100);
+let batchSize: number = $state(64);
+let framerate: number = $state(3);
+let minX: number = $state(-6.28);
+let maxX: number = $state(6.28);
+let pointCount: number = $state(500);
+const prediction: number = $state(0);
+const answer: unknown = $state(0);
+const snapshotRate: number = $derived(Math.floor(epochs / framerate));
 
 import * as tf from "@tensorflow/tfjs"; // Ensure this matches the TensorFlow version used in training.ts
 
@@ -53,13 +53,6 @@ const { functionType, model } = $props() as {functionType: string, model: tf.Seq
       <input class="unitInput" type="number" bind:value={framerate} />
     </label>
     <br />
-    <label>
-      Make a prediction:
-      <input class="unitInput" type="number" bind:value={prediction} />
-    </label>
-    <button class="boton-elegante" id="yellowElon" on:click={() => {answer = visMakePrediction(prediction, model);}}>
-      Make Prediction
-    </button>
     <p id="progress"></p>
     <p>Snapshot every {snapshotRate} epochs</p>
     <p>Model Prediction: {answer}</p>

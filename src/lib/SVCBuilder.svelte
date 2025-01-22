@@ -1,14 +1,8 @@
 <script lang="ts">
 import {
-  createData,
   viewKNN
 } from '$lib/svm';
-const kernel:string = $state("linear");
-const regularization: number = $state(0);
-const epsilon: number = $state(0);
 let pointCount: number = $state(100);
-const gamma: number = $state(0);
-const degree: number = $state(0);
 const { dataset } = $props() as {dataset: string};
 
 </script>
@@ -22,7 +16,7 @@ const { dataset } = $props() as {dataset: string};
     </label>
     <br>
   </div>
-  <button class="boton-elegante" id="greenElon" on:click={() => viewKNN(dataset, pointCount)}>
+  <button class="boton-elegante" id="greenElon" onclick={() => viewKNN(dataset, pointCount)}>
     Start Training
   </button>
 </div>

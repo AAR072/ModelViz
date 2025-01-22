@@ -3,56 +3,56 @@ import { writable } from "svelte/store";
 import RegressionTrainer from "$lib/regressionTrainer.svelte";
 import * as tf from "@tensorflow/tfjs"; // TensorFlow.js
 
-const { functionType } = $props();
+const { functionType } = $props() as {functionType: string};
 let readyToTrain: boolean = $state(false);
 let secondReady: boolean = $state(false);
 
 // Store for layers
-const layers = writable([]);
+const layers: any = writable([]);
 
 
 
 // TensorFlow.js model instance
-let model: tf.Sequential | null = null;
-layers.update((current) => [
+let model: tf.Sequential | null = $state(null);
+layers.update((current: unknown[]) => [
   ...current,
   { type: "dense", units: 32, activation: "relu", inputShape: "[1]" }
 ]);
 
 // Add a new layer to the list
-function addLayer() {
-  layers.update((current) => [
+function addLayer(): void {
+  layers.update((current: unknown[]) => [
     ...current,
     {  units: 32, activation: "relu", inputShape: "" }
   ]);
 }
 
-function useDefaults() {
-  layers.update((current) => [
+function useDefaults(): void {
+  layers.update(() => [
     { units: 64, activation: "tanh", inputShape: "[1]" },
     { units: 64, activation: "tanh", inputShape: "" }
   ]);
 }
 
 // Remove a layer
-function removeLayer(index) {
-  layers.update((current) => current.filter((_, i) => i !== index));
+function removeLayer(index: number): void {
+  layers.update((current: unknown[]) => current.filter((_, i) => i !== index));
 }
 
 // Update layer properties
-function updateLayer(index, field, value) {
-  layers.update((current) => {
+function updateLayer(index: number, field: number | string, value: unknown): void {
+  layers.update((current: any[]) => {
     current[index][field] = value;
     return current;
   });
 }
 
 // Build the TensorFlow.js model based on user input
-function buildModel() {
-  const userLayers = $layers; // Access the current layers
+function buildModel(): void {
+  const userLayers: unknown[] = $layers; // Access the current layers
   model = tf.sequential(); // Create a new sequential model
 
-  userLayers.forEach((layer, index) => {
+  userLayers.forEach((layer: any, index: number) => {
     const layerConfig: any = { units: parseInt(layer.units), activation: layer.activation };
 
     // Only add inputShape for the first layer
@@ -61,6 +61,11 @@ function buildModel() {
     }
 
     // Add the layer to the model
+    if (model === null){
+      console.error("Model is null");
+      
+      return;
+    }
       model.add(tf.layers.dense(layerConfig));
   });
 
@@ -70,7 +75,7 @@ function buildModel() {
 }
 
 // Export the TensorFlow.js model
-function exportModel() {
+function exportModel(): void {
   buildModel();
   readyToTrain = true;
   setTimeout(() => {

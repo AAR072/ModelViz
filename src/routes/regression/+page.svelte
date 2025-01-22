@@ -1,20 +1,19 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import ModelBuilder from '$lib/modelBuilder.svelte';
-let innerWidth = $state(0);
-const onPC = $derived(innerWidth > 768);
-let titleVisible = $state(false);
-let subtitleVisible = $state(false);
+let innerWidth: number = $state(0);
+let titleVisible: boolean = $state(false);
+let subtitleVisible: boolean = $state(false);
 const cards: boolean [] = $state([]);
 const stages: boolean [] = $state([true]);
-let firstDiv = $state(true);
-let secondDiv = $state(false);
-let stagesPtr = 0;
+let firstDiv: boolean = $state(true);
+let secondDiv: boolean = $state(false);
+let stagesPtr: number = 0;
 let chosenFunction: string = $state("");
-for (let index = 0; index < 6; index++) {
+for (let i: number = 0; i < 6; i++) {
   cards.push(false);
 }
-for (let index = 0; index < 3; index++) {
+for (let i: number = 0; i < 3; i++) {
   stages.push(false);
 }
 onMount(() => {
@@ -24,19 +23,19 @@ onMount(() => {
   setTimeout(() => {
     subtitleVisible = true;
   }, 1500 );
-  for (let i = 0; i < cards.length; i++) {
+  for (let i: number = 0; i < cards.length; i++) {
     setTimeout(() => {
     cards[i] = true;
     }, 1500 + (i + 1) * 500);
   }
 });
-function nextStage() {
+function nextStage(): void {
   stages[stagesPtr] = false;
   stagesPtr++;
   setTimeout(() => {stages[stagesPtr] = true;
  }, 1500);
 }
-function chooseFunction(functionType: string) {
+function chooseFunction(functionType: string): void {
   chosenFunction = functionType;
   nextStage();
   setTimeout(() => {
@@ -54,7 +53,7 @@ function chooseFunction(functionType: string) {
 </div>
 <div class="allCardContainer">
   <div class="card-container">
-    <div class="card" class:fade-in={cards[0]} class:hidden={!cards[0]} onclick={() => chooseFunction("sine")}>
+    <div class="card" class:fade-in={cards[0]} class:hidden={!cards[0]} onclick={() => chooseFunction("sine")} role="none">
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
           <!-- Vertical gridlines -->
@@ -100,7 +99,7 @@ function chooseFunction(functionType: string) {
     </div>
   </div>
   <div class="card-container">
-    <div class="card" class:fade-in={cards[1]} class:hidden={!cards[1]} onclick={() => chooseFunction("parabola")}> 
+    <div class="card" class:fade-in={cards[1]} class:hidden={!cards[1]} onclick={() => chooseFunction("parabola")} role="none"> 
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
           <!-- Vertical gridlines -->
@@ -150,7 +149,7 @@ function chooseFunction(functionType: string) {
   </div>
 
   <div class="card-container">
-    <div class="card" class:fade-in={cards[2]} class:hidden={!cards[2]} onclick={() => chooseFunction("exponential")}>
+    <div class="card" class:fade-in={cards[2]} class:hidden={!cards[2]} onclick={() => chooseFunction("exponential")} role="none">
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
           <!-- Vertical gridlines -->

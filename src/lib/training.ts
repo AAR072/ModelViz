@@ -1,70 +1,61 @@
 import * as tf from "@tensorflow/tfjs";
-import Chart, { LinearScale } from 'chart.js/auto';
+import Chart from 'chart.js/auto';
+import type { w } from "vitest/dist/chunks/reporters.D7Jzd9GS.js";
 let myChart: Chart | null = null;
-function getRandomRedColor(): { borderColor: string; backgroundColor: string } {
-  const red = Math.floor(Math.random() * 256); // Random red value (0-255)
-  const green = Math.floor(Math.random() * 128); // Random green value (0-127 for a red-dominated shade)
-  const blue = Math.floor(Math.random() * 128); // Random blue value (0-127 for a red-dominated shade)
-
-  return {
-    borderColor: `rgb(${red}, ${green}, ${blue})`,
-    backgroundColor: `rgba(${red}, ${green}, ${blue}, 1)`
-  };
-}
 export function createData(functionType: string, maxX: number, minX: number, pointCount: number): [tf.Tensor, tf.Tensor] {
   if (functionType === "sine") {
-    const xValues = [];
-    const step = (maxX - minX) / (pointCount - 1);
-    for (let i = 0; i < pointCount; i++) {
+    const xValues: number[] = [];
+    const step: number = (maxX - minX) / (pointCount - 1);
+    for (let i: number = 0; i < pointCount; i++) {
       xValues.push(minX + i * step);
     }
-    const yValues = xValues.map(x => -Math.sin(x));
-    const xTensor = tf.tensor(xValues);
-    const yTensor = tf.tensor(yValues);
+    const yValues: number[] = xValues.map(x => -Math.sin(x));
+    const xTensor: tf.Tensor = tf.tensor(xValues);
+    const yTensor: tf.Tensor = tf.tensor(yValues);
     return [xTensor, yTensor];
   } else if (functionType === "exponential") {
-    const xValues = [];
-    const step = (maxX - minX) / (pointCount - 1);
-    for (let i = 0; i < pointCount; i++) {
+    const xValues: number[] = [];
+    const step: number = (maxX - minX) / (pointCount - 1);
+    for (let i: number = 0; i < pointCount; i++) {
       xValues.push(minX + i * step);
     }
-    const yValues = xValues.map(x => Math.pow(2,-x));
-    const xTensor = tf.tensor(xValues);
-    const yTensor = tf.tensor(yValues);
+    const yValues: number[] = xValues.map(x => Math.pow(2,-x));
+    const xTensor: tf.Tensor = tf.tensor(xValues);
+    const yTensor: tf.Tensor = tf.tensor(yValues);
     return [xTensor, yTensor];
   } else if (functionType === "parabola") {
-    const xValues = [];
-    const step = (maxX - minX) / (pointCount - 1);
-    for (let i = 0; i < pointCount; i++) {
+    const xValues: number[] = [];
+    const step: number = (maxX - minX) / (pointCount - 1);
+    for (let i: number = 0; i < pointCount; i++) {
       xValues.push(minX + i * step);
     }
-    const yValues = xValues.map(x => x ** 2);
-    const xTensor = tf.tensor(xValues);
-    const yTensor = tf.tensor(yValues);
+    const yValues: number[] = xValues.map(x => x ** 2);
+    const xTensor: tf.Tensor = tf.tensor(xValues);
+    const yTensor: tf.Tensor = tf.tensor(yValues);
     return [xTensor, yTensor];
   }
   alert("Error creating data");
   return [tf.tensor([0]), tf.tensor([0])];
 }
 
-export function makePrediction(inputValue: number, model: tf.Sequential) {
-  const inputTensor = tf.tensor([inputValue]);
-  const prediction = model.predict(inputTensor) as tf.Tensor;
+export function makePrediction(inputValue: number, model: tf.Sequential): tf.Tensor {
+  const inputTensor: tf.Tensor = tf.tensor([inputValue]);
+  const prediction: tf.Tensor = model.predict(inputTensor) as tf.Tensor ;
   return prediction;
 }
 
-export function visMakePrediction(inputValue: number, model: tf.Sequential): any {
-  const inputTensor = tf.tensor([inputValue]);
-  const prediction = model.predict(inputTensor) as tf.Tensor;
+export function visMakePrediction(inputValue: number, model: tf.Sequential): Float32Array | Int32Array | Uint8Array {
+  const inputTensor: tf.Tensor = tf.tensor([inputValue]);
+  const prediction: tf.Tensor = model.predict(inputTensor) as tf.Tensor;
   return prediction.dataSync();
 }
 
-export function startTraining(functionType: string, model: tf.Sequential, maxX: number, minX: number, pointCount: number, epochs: number, batchSize: number, framerate: number) {
+export function startTraining(functionType: string, model: tf.Sequential, maxX: number, minX: number, pointCount: number, epochs: number, batchSize: number, framerate: number): void {
   if (myChart) {
     myChart.destroy();
   }
   const [xData, yData] = createData(functionType, maxX, minX, pointCount);
-  const trainingPreview = document.getElementById('progress') as HTMLParagraphElement;
+  const trainingPreview: HTMLParagraphElement = document.getElementById('progress') as HTMLParagraphElement;
   model.compile({
     optimizer: tf.train.adam(),
     loss: 'meanSquaredError',
@@ -74,17 +65,17 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
   const predictions: number[] = [];
   const temp: number[] = Array.from(xData.dataSync());
   const xValuesForPlotting: number[] = []; 
-  for (let i = 0; i < temp.length; i++) {
+  for (let i: number = 0; i < temp.length; i++) {
     const val: number = temp[temp.length - i - 1]; 
     const secondary: string = val.toFixed(2); 
     const final: number = +secondary;
     xValuesForPlotting.push(final);
   }
 
-  const printMSECallback = {
+  const printMSECallback: { onEpochEnd: (epoch: number, logs: tf.Logs) => Promise<void>; } = {
     onEpochEnd: async (epoch: number, logs: tf.Logs) => {
       trainingPreview.innerText = `Epoch: ${epoch}`;
-      const colors = ['red', 'orange', 'yellow', 'green', 'purple', 'pink', 'white'];
+      const colors: string[] = ['red', 'orange', 'yellow', 'green', 'purple', 'pink', 'white'];
       // Save predictions every 20 epochs
       if ((epoch + 1) % framerate === 0) {
         if (myChart) {
@@ -92,7 +83,7 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
         }
         const predictionsAtEpoch: number[] = [];
         xData.dataSync().forEach((inputValue, index) => {
-          const prediction = makePrediction(inputValue, model);
+          const prediction: tf.Tensor = makePrediction(inputValue, model);
           prediction.data().then(predictedValue => {
             predictionsAtEpoch.push(predictedValue[0]);
           });
@@ -187,8 +178,8 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
       }
       trainingPreview.innerText = `Finished Training`;
       // After training, plot the results using Chart.js
-      const ctx = document.getElementById('myChart') as HTMLCanvasElement;
-      const chartData = {
+      const ctx: HTMLCanvasElement = document.getElementById('myChart') as HTMLCanvasElement;
+      const chartData: { labels: number[]; datasets: { label: string; data: number[]; borderColor: string; backgroundColor: string; fill: boolean; tension: number; }[]; } = {
         labels: xValuesForPlotting,
         datasets: [{
           label: 'Training Data (Base Function)',
@@ -200,7 +191,7 @@ export function startTraining(functionType: string, model: tf.Sequential, maxX: 
         }]
       };
       predictions.forEach((predictionSet, epochIndex) => {
-        const colors = ['red', 'orange', 'yellow', 'green', 'purple', 'pink', 'white'];
+        const colors: string[] = ['red', 'orange', 'yellow', 'green', 'purple', 'pink', 'white'];
         chartData.datasets.push({
           label: `Epoch ${framerate * (epochIndex + 1)} Predictions`,
           data: predictionSet,
