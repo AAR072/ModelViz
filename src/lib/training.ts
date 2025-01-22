@@ -31,11 +31,9 @@ export class DataGenerator {
 }
 
 export class ModelTrainer {
-  model: tf.Sequential;
   private _predictions: number[][];
-  framerate: number;
 
-  constructor(model: tf.Sequential, framerate: number) {
+  constructor(private model: tf.Sequential, private framerate: number) {
     this.model = model;
     this._predictions = [];
     this.framerate = framerate;
@@ -45,7 +43,7 @@ export class ModelTrainer {
     return this._predictions;
   }
 
-  compileModel(): void {
+  public compileModel(): void {
     this.model.compile({
       optimizer: tf.train.adam(),
       loss: "meanSquaredError",
@@ -53,7 +51,7 @@ export class ModelTrainer {
     });
   }
 
-  async train(
+  public async train(
     functionType: string,
     maxX: number,
     minX: number,
@@ -86,15 +84,15 @@ export class ModelTrainer {
 }
 
 export class Visualization {
-  chart: Chart | null = null;
+  private chart: Chart | null = null;
 
-  destroyChart(): void {
+  private destroyChart(): void {
     if (this.chart) {
       this.chart.destroy();
     }
   }
 
-  plot(
+  public plot(
     xValues: number[],
     yValues: number[],
     predictions: number[][],
