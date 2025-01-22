@@ -77,8 +77,8 @@ export class ModelTrainer {
             this._predictions.push(predictionsAtEpoch);
           }
           updateCallback(epoch, logs);
-        },
-      },
+        }
+      }
     });
   }
 }
@@ -113,8 +113,8 @@ export class LineChartVisualization extends BaseVisualization {
         label: "Training Data",
         data: yValues,
         borderColor: "rgb(75, 192, 192)",
-        fill: false,
-      },
+        fill: false
+      }
     ];
 
     const colors = ["red", "orange", "yellow", "green", "purple"];
@@ -123,7 +123,7 @@ export class LineChartVisualization extends BaseVisualization {
         label: `Epoch ${framerate * (index + 1)}`,
         data: prediction,
         borderColor: colors[index % colors.length],
-        fill: false,
+        fill: false
       });
     });
 
@@ -131,7 +131,7 @@ export class LineChartVisualization extends BaseVisualization {
     this.chart = new Chart(ctx, {
       type: "line",
       data: { labels: xValues, datasets },
-      options: { responsive: true },
+      options: { responsive: true }
     });
   }
 }
@@ -149,15 +149,15 @@ class ScatterChartVisualization extends BaseVisualization {
       {
         label: "Training Data",
         data: yValues.map((y, i) => ({ x: xValues[i], y })),
-        backgroundColor: "rgba(75, 192, 192, 0.5)",
-      },
+        backgroundColor: "rgba(75, 192, 192, 0.5)"
+      }
     ];
 
     this.destroyChart();
     this.chart = new Chart(ctx, {
       type: "scatter",
       data: { datasets },
-      options: { responsive: true },
+      options: { responsive: true }
     });
   }
 }

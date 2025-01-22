@@ -81,7 +81,7 @@ class KNNVisualizer {
         plugins: {
           legend: {
             display: false
-          },
+          }
         },
         scales: {
           x: {
@@ -99,9 +99,9 @@ class KNNVisualizer {
               display: true,
               color: "#363636"
             }
-          },
-        },
-      },
+          }
+        }
+      }
     });
   }
 
@@ -112,12 +112,12 @@ class KNNVisualizer {
       const color = point.label === 1 ? "blue" : "red";
       datasets.push({
         data: [{ x: point.x[0], y: point.y[0] }],
-        backgroundColor: color,
+        backgroundColor: color
       });
     });
 
     return {
-      datasets,
+      datasets
     };
   }
 }
