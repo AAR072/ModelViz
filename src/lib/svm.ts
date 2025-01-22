@@ -1,6 +1,6 @@
 import * as tf from "@tensorflow/tfjs";
 import * as tfModels from "@tensorflow-models/knn-classifier";
-import Chart, { LinearScale, type ChartData, type Point } from 'chart.js/auto';
+import Chart from 'chart.js/auto';
 let myChart: Chart | null = null;
 /**
  * Generates data points and adds them to the provided KNN classifier.
@@ -9,14 +9,14 @@ let myChart: Chart | null = null;
  * @param pointCount Number of data points to generate.
  * @param classifier The KNN classifier to add data points to.
  */
-export function createData(functionType: string, pointCount: number, classifier: tfModels.KNNClassifier) {
+export function createData(functionType: string, pointCount: number, classifier: tfModels.KNNClassifier): unknown[] {
 
-  const data = []; // Array to hold points and labels
+  const data: unknown[] = []; // Array to hold points and labels
 
-  for (let i = 0; i < pointCount; i++) {
+  for (let i: number = 0; i < pointCount; i++) {
     // Generate random x and y values
-    const x = +(Math.random()).toFixed(2);  // Random x value between 0 and 1
-    const y = +(Math.random()).toFixed(2);  // Random y value between 0 and 1
+    const x: number = +(Math.random()).toFixed(2);  // Random x value between 0 and 1
+    const y: number = +(Math.random()).toFixed(2);  // Random y value between 0 and 1
 
     let label: number;
 
@@ -34,7 +34,7 @@ export function createData(functionType: string, pointCount: number, classifier:
     }
 
     // Create a feature tensor
-    const feature = tf.tensor([x, y]); // Feature vector [x, y]
+    const feature: tf.Tensor = tf.tensor([x, y]); // Feature vector [x, y]
 
     // Add the feature and label to the classifier
     classifier.addExample(feature, label);
@@ -44,10 +44,10 @@ export function createData(functionType: string, pointCount: number, classifier:
   }
   return data;
 }
-export function viewKNN(functionType: string, pointCount: number) {
-  const model = tfModels.create();
-  const predictionSet = createData(functionType, pointCount, model);
-  const chartData = { 
+export function viewKNN(functionType: string, pointCount: number): void {
+  const model: tfModels.KNNClassifier = tfModels.create();
+  const predictionSet: unknown[] = createData(functionType, pointCount, model);
+  const chartData: unknown = { 
     labels: ["Red Points","Blue Points"] as string[], 
     datasets: [] as { [key: string]: any }[]  // array of objects with string keys and any values
   };
@@ -56,7 +56,7 @@ export function viewKNN(functionType: string, pointCount: number) {
   const blueArray: number[][] = [];
   const whiteArray: number[][] = [];
 
-  for (let i = 0; i < predictionSet.length; i++) {
+  for (let i: number = 0; i < predictionSet.length; i++) {
     if (predictionSet[i].y === 0) {
       redArray.push(predictionSet[i].x);
     } else {
@@ -65,9 +65,9 @@ export function viewKNN(functionType: string, pointCount: number) {
   }
 
   // Generate 100 white points based on the functionType logic
-  for (let i = 1; i < 100; i++) {
-    let x = i / 100;
-    let y = 0;
+  for (let i: number = 1; i < 100; i++) {
+    let x: number = i / 100;
+    let y: number = 0;
 
     if (functionType === "shotgun") {
       y = x;
@@ -87,10 +87,11 @@ export function viewKNN(functionType: string, pointCount: number) {
     whiteArray.push([x, y, 2]);
   }
 
-  async function processPredictions() {
+  async function processPredictions(): Promise<void> {
     // Store promises for redArray predictions
     const redPromises = redArray.map((item, i) => {
-      const feature = tf.tensor(item); // Feature vector [x, y]
+      const feature: tf.Tensor = tf.tensor(item); // Feature vector [x, y]
+
       return model.predictClass(feature).then((prediction) => {
         redArray[i].push(+prediction.label);
       });
@@ -98,7 +99,7 @@ export function viewKNN(functionType: string, pointCount: number) {
 
     // Store promises for blueArray predictions
     const bluePromises = blueArray.map((item, i) => {
-      const feature = tf.tensor(item); // Feature vector [x, y]
+      const feature: tf.Tensor = tf.tensor(item); // Feature vector [x, y]
       return model.predictClass(feature).then((prediction) => {
         blueArray[i].push(+prediction.label);
       });
@@ -107,38 +108,32 @@ export function viewKNN(functionType: string, pointCount: number) {
     // Wait for all predictions to complete
     await Promise.all([...redPromises, ...bluePromises]);
 
-    // Now you can continue with the rest of the code
-    const dataset = model.getClassifierDataset();
 
-    // 2. Make predictions and store.
-    // 3. Add to data and label
-    // Colors for each class
-    const colors = ['red', 'blue', 'white'];
+    const colors: string[] = ['red', 'blue', 'white'];
 
     // Create a dataset for this class
-    for (let i = 0; i < redArray.length; i++) {
+    for (let i: number = 0; i < redArray.length; i++) {
       chartData.datasets.push({
         label: `${redArray[i][2]}` as string,
         data: [{x: redArray[i][0], y: redArray[i][1]}],
         backgroundColor: colors[+redArray[i][2]] // Cycle through colors
       });
     }
-    for (let i = 0; i < blueArray.length; i++) {
+    for (let i: number = 0; i < blueArray.length; i++) {
       chartData.datasets.push({
         label: `${blueArray[i][2]}` as string,
         data: [{x: blueArray[i][0], y: blueArray[i][1]}],
         backgroundColor: colors[+blueArray[i][2]] // Cycle through colors
       });
     }
-    for (let i = 0; i < whiteArray.length; i++) {
+    for (let i: number = 0; i < whiteArray.length; i++) {
       chartData.datasets.push({
         label: `${whiteArray[i][2]}` as string,
         data: [{x: whiteArray[i][0], y: whiteArray[i][1]}],
         backgroundColor: colors[+whiteArray[i][2]] // Cycle through colors
       });
     }
-    console.log(redArray,blueArray,whiteArray);
-    const ctx = document.getElementById('chart') as HTMLCanvasElement;
+    const ctx: HTMLCanvasElement = document.getElementById('chart') as HTMLCanvasElement;
     if (!ctx) {
       console.error("Canvas element with id 'chart' not found");
       return;

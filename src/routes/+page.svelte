@@ -6,7 +6,6 @@ let titleVisible: boolean = $state(false);
 let subtitleVisible: boolean = $state(false);
 let card1Visible: boolean = $state(false);
 let card2Visible: boolean = $state(false);
-let card3Visible: boolean = $state(false);
 // make everything fade in
 onMount(() => {
   setTimeout(() => {
@@ -21,27 +20,22 @@ onMount(() => {
   setTimeout(() => {
     card2Visible = true;
   }, 3500 );
-  setTimeout(() => {
-    card3Visible = true;
-  }, 4500);
 });
 // change the page slowly
-function goToRegression() {
+function goToRegression(): void {
   titleVisible = false;
   subtitleVisible = false;
   card1Visible = false;
   card2Visible = false;
-  card3Visible = false;
   setTimeout(() => {
     goto('/regression');
   }, 1000);
 }
-function goToClassification() {
+function goToClassification(): void {
   titleVisible = false;
   subtitleVisible = false;
   card1Visible = false;
   card2Visible = false;
-  card3Visible = false;
   setTimeout(() => {
     goto('/classification');
   }, 1000);
@@ -53,7 +47,7 @@ function goToClassification() {
   <p id="pageSubtitle" class:fade-in={subtitleVisible} class:hidden={!subtitleVisible}>Choose a problem to visualize</p>
 </div>
 <div class="allCardContainer">
-  <div class="card-container" onclick={goToRegression} role="link">
+  <div class="card-container" onclick={goToRegression} role="none">
     <div class="card" class:fade-in={card1Visible} class:hidden={!card1Visible}>
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
@@ -100,7 +94,7 @@ function goToClassification() {
     </div>
   </div>
   <div class="card-container">
-    <div class="card" class:fade-in={card2Visible} class:hidden={!card2Visible} onclick={goToClassification}>
+    <div class="card" class:fade-in={card2Visible} class:hidden={!card2Visible} onclick={goToClassification} role="none">
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
           <!-- Vertical gridlines -->

@@ -1,20 +1,19 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import SVCBuilder from '$lib/SVCBuilder.svelte';
-let innerWidth = $state(0);
-const onPC = $derived(innerWidth > 768);
-let titleVisible = $state(false);
-let subtitleVisible = $state(false);
+let innerWidth: number = $state(0);
+let titleVisible: boolean = $state(false);
+let subtitleVisible: boolean = $state(false);
 const cards: boolean [] = $state([]);
 const stages: boolean [] = $state([true]);
-let firstDiv = $state(true);
-let secondDiv = $state(false);
-let stagesPtr = 0;
+let firstDiv: boolean = $state(true);
+let secondDiv: boolean = $state(false);
+let stagesPtr: number = 0;
 let chosenFunction: string = $state("");
-for (let index = 0; index < 6; index++) {
+for (let index: number = 0; index < 6; index++) {
   cards.push(false);
 }
-for (let index = 0; index < 3; index++) {
+for (let index: number = 0; index < 3; index++) {
   stages.push(false);
 }
 onMount(() => {
@@ -24,19 +23,19 @@ onMount(() => {
   setTimeout(() => {
     subtitleVisible = true;
   }, 1500 );
-  for (let i = 0; i < cards.length; i++) {
+  for (let i: number = 0; i < cards.length; i++) {
     setTimeout(() => {
       cards[i] = true;
     }, 1500 + (i + 1) * 500);
   }
 });
-function nextStage() {
+function nextStage(): void {
   stages[stagesPtr] = false;
   stagesPtr++;
   setTimeout(() => {stages[stagesPtr] = true;
   }, 1500);
 }
-function chooseDataset(dataType: string) {
+function chooseDataset(dataType: string): void {
   chosenFunction = dataType;
   nextStage();
   setTimeout(() => {
@@ -54,7 +53,7 @@ function chooseDataset(dataType: string) {
     </div>
     <div class="allCardContainer">
       <div class="card-container">
-        <div class="card" class:fade-in={cards[0]} class:hidden={!cards[0]} onclick={() => chooseDataset("td")}>
+        <div class="card" class:fade-in={cards[0]} class:hidden={!cards[0]} onclick={() => chooseDataset("td")} role="none">
           <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
             <g stroke="lightgrey" stroke-width="0.5">
               <!-- Vertical gridlines -->
@@ -106,7 +105,7 @@ function chooseDataset(dataType: string) {
         </div>
       </div>
       <div class="card-container">
-        <div class="card" class:fade-in={cards[1]} class:hidden={!cards[1]} onclick={() => chooseDataset("lr")}> 
+        <div class="card" class:fade-in={cards[1]} class:hidden={!cards[1]} onclick={() => chooseDataset("lr")} role="none"> 
           <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
             <g stroke="lightgrey" stroke-width="0.5">
               <!-- Vertical gridlines -->
@@ -159,7 +158,7 @@ function chooseDataset(dataType: string) {
       </div>
 
       <div class="card-container">
-        <div class="card" class:fade-in={cards[2]} class:hidden={!cards[2]} onclick={() => chooseDataset("shotgun")}>
+        <div class="card" class:fade-in={cards[2]} class:hidden={!cards[2]} onclick={() => chooseDataset("shotgun")} role="none">
           <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
             <g stroke="lightgrey" stroke-width="0.5">
               <!-- Vertical gridlines -->

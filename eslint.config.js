@@ -9,7 +9,7 @@ const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
 export default ts.config(
   includeIgnoreFile(gitignorePath),
   js.configs.recommended,
-  ...ts.configs.recommended,
+  ts.configs.recommended,
   ...svelte.configs["flat/recommended"],
   {
     languageOptions: {
@@ -57,9 +57,23 @@ export default ts.config(
       "one-var": ["error", "never"],
 
       // Type Declarations
-      "@typescript-eslint/explicit-function-return-type": "error",
+      "@typescript-eslint/explicit-function-return-type": [
+        "error",
+        { "allowExpressions": true, 
+          "allowTypedFunctionExpressions": true } 
+      ],
       "@typescript-eslint/typedef": [
-        "error"
+        "error",
+        {
+          arrayDestructuring: true,
+          arrowParameter: false,
+          memberVariableDeclaration: true,
+          objectDestructuring: true,
+          parameter: true,
+          propertyDeclaration: true,
+          variableDeclaration: true,
+          variableDeclarationIgnoreFunction: false
+        }
       ],
 
       // Private Fields
