@@ -4,7 +4,7 @@ import Chart from "chart.js/auto";
 
 // Abstract Base Class for Data Generation
 abstract class DataGenerator {
-  public abstract generateData(pointCount: number): { x: number[]; y: number[]; label: number }[];
+  public abstract generateData(pointCount: number): { x: number; y: number; label: number }[];
 
   protected createFeature(x: number, y: number): tf.Tensor {
     return tf.tensor([x, y]);
@@ -13,62 +13,46 @@ abstract class DataGenerator {
 
 // Concrete Implementations for Different Function Types
 class ShotgunDataGenerator extends DataGenerator {
-  generateData(pointCount: number): { x: number[]; y: number[]; label: number }[] {
-    const data = [];
-    for (let i = 0; i < pointCount; i++) {
+  generateData(pointCount: number): { x: number; y: number; label: number }[] {
+    return Array.from({ length: pointCount }, () => {
       const x = +(Math.random()).toFixed(2);
       const y = +(Math.random()).toFixed(2);
-      const label = y > x ? 1 : 0;
-      data.push({ x: [x], y: [y], label });
-    }
-    return data;
+      return { x, y, label: y > x ? 1 : 0 };
+    });
   }
 }
 
 class ThresholdDataGenerator extends DataGenerator {
-  generateData(pointCount: number): { x: number[]; y: number[]; label: number }[] {
-    const data = [];
-    for (let i = 0; i < pointCount; i++) {
+  generateData(pointCount: number): { x: number; y: number; label: number }[] {
+    return Array.from({ length: pointCount }, () => {
       const x = +(Math.random()).toFixed(2);
       const y = +(Math.random()).toFixed(2);
-      const label = y > 0.5 ? 1 : 0;
-      data.push({ x: [x], y: [y], label });
-    }
-    return data;
+      return { x, y, label: y > 0.5 ? 1 : 0 };
+    });
   }
 }
 
 class LinearDataGenerator extends DataGenerator {
-  generateData(pointCount: number): { x: number[]; y: number[]; label: number }[] {
-    const data = [];
-    for (let i = 0; i < pointCount; i++) {
+  generateData(pointCount: number): { x: number; y: number; label: number }[] {
+    return Array.from({ length: pointCount }, () => {
       const x = +(Math.random()).toFixed(2);
       const y = +(Math.random()).toFixed(2);
-      const label = x > 0.5 ? 1 : 0;
-      data.push({ x: [x], y: [y], label });
-    }
-    return data;
+      return { x, y, label: x > 0.5 ? 1 : 0 };
+    });
   }
 }
 
 // Visualization Class
 class KNNVisualizer {
-  
-  constructor(private ctx: HTMLCanvasElement) {
-
-  };
-
-  
-
   private chart: Chart | null = null;
 
-  public plot(data: { x: number[]; y: number[]; label: number }[]): void {
-    const chartData = this.formatDataForChart(data);
+  constructor(private ctx: HTMLCanvasElement) {}
 
-    if (!this.ctx) {
-      console.error("Canvas element with id 'chart' not found");
-      return;
-    }
+  public plot(data: { x: number; y: number }[], predictions: number[]): void {
+    const datasets = data.map((point, index) => ({
+      data: [{ x: point.x, y: point.y }],
+      backgroundColor: predictions[index] === 1 ? "blue" : "red",
+    }));
 
     if (this.chart) {
       this.chart.destroy();
@@ -76,49 +60,15 @@ class KNNVisualizer {
 
     this.chart = new Chart(this.ctx, {
       type: "scatter",
-      data: chartData,
+      data: { datasets },
       options: {
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
+        plugins: { legend: { display: false } },
         scales: {
-          x: {
-            type: "linear",
-            position: "bottom",
-            grid: {
-              display: true,
-              color: "#363636"
-            }
-          },
-          y: {
-            type: "linear",
-            position: "left",
-            grid: {
-              display: true,
-              color: "#363636"
-            }
-          }
-        }
-      }
+          x: { type: "linear", position: "bottom", grid: { color: "#363636" } },
+          y: { type: "linear", position: "left", grid: { color: "#363636" } },
+        },
+      },
     });
-  }
-
-  private formatDataForChart(data: { x: number[]; y: number[]; label: number }[]): any {
-    const datasets: { data: { x: number; y: number }[]; backgroundColor: string }[] = [];
-
-    data.forEach((point) => {
-      const color = point.label === 1 ? "blue" : "red";
-      datasets.push({
-        data: [{ x: point.x[0], y: point.y[0] }],
-        backgroundColor: color
-      });
-    });
-
-    return {
-      datasets
-    };
   }
 }
 
@@ -132,7 +82,7 @@ export class KNNApp {
     this.visualizer = new KNNVisualizer(ctx);
   }
 
-  public run(functionType: string, pointCount: number): void {
+  public async run(functionType: string, pointCount: number): Promise<void> {
     const generator = this.getGenerator(functionType);
     if (!generator) {
       console.error("Invalid function type");
@@ -140,13 +90,27 @@ export class KNNApp {
     }
 
     const data = generator.generateData(pointCount);
+    const predictions: number[] = [];
 
-    data.forEach((point) => {
-      const feature = tf.tensor([...point.x, ...point.y]);
-      this.classifier.addExample(feature, point.label);
-    });
+    for (const { x, y, label } of data) {
+      const feature = tf.tensor([x, y]);
+      this.classifier.addExample(feature, label);
 
-    this.visualizer.plot(data);
+      feature.dispose(); // Avoid memory leaks
+    }
+    for (const { x, y } of data) {
+      const feature = tf.tensor([x, y]);
+
+      const prediction = await this.classifier.predictClass(feature); // Await the Promise
+      predictions.push(Number(prediction.label)); // Safely extract and convert the label
+
+      feature.dispose(); // Avoid memory leaks
+    }
+
+    this.visualizer.plot(
+      data.map(({ x, y }) => ({ x, y })),
+      predictions
+    );
   }
 
   private getGenerator(functionType: string): DataGenerator | null {
