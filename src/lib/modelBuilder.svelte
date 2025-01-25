@@ -1,13 +1,13 @@
 <script lang="ts">
 import { writable } from "svelte/store";
 import RegressionTrainer from "$lib/regressionTrainer.svelte";
-import * as tf from "@tensorflow/tfjs"; // TensorFlow.js
+import * as tf from "@tensorflow/tfjs";
 
 const { functionType } = $props() as {functionType: string};
 let readyToTrain: boolean = $state(false);
 let secondReady: boolean = $state(false);
 
-// Store for layers
+// Svelte kit Store for layers
 const layers: any = writable([]);
 
 
@@ -19,38 +19,63 @@ layers.update((current: unknown[]) => [
   { type: "dense", units: 32, activation: "relu", inputShape: "[1]" }
 ]);
 
-// Add a new layer to the list
+// All the model creation functions are here because the html is very related
+// Having a script that is far removed would be redundant
+
+/**
+ * Adds a new layer with default parameters (32 units, 'relu' activation, no input shape).
+ */
 function addLayer(): void {
   layers.update((current: unknown[]) => [
     ...current,
-    {  units: 32, activation: "relu", inputShape: "" }
+    // default parameters
+    { units: 32, activation: "relu", inputShape: "" }
   ]);
 }
 
+/**
+ * Sets the layers to default values (two layers with 64 units and 'tanh' activation).
+ */
 function useDefaults(): void {
+  // use the model I always use
   layers.update(() => [
     { units: 64, activation: "tanh", inputShape: "[1]" },
     { units: 64, activation: "tanh", inputShape: "" }
   ]);
 }
 
-// Remove a layer
+/**
+ * Removes a layer from the model at a given index.
+ * @param index The index of the layer to remove.
+ */
 function removeLayer(index: number): void {
+  // It works ¯\_(ツ)_/¯
   layers.update((current: unknown[]) => current.filter((_, i) => i !== index));
 }
 
-// Update layer properties
+/**
+ * Updates the properties of a specific layer in the model.
+ * @param index The index of the layer to update.
+ * @param field The property of the layer to modify (e.g., 'units', 'activation', etc.).
+ * @param value The new value to set for the specified property.
+ */
 function updateLayer(index: number, field: number | string, value: unknown): void {
+  // tweak the properties of a layer
   layers.update((current: any[]) => {
     current[index][field] = value;
     return current;
   });
 }
 
-// Build the TensorFlow.js model based on user input
+/**
+ * Builds the TensorFlow.js model based on the user-defined layers.
+ * The model is built as a sequential model where each layer is added based on the user's input.
+ */
 function buildModel(): void {
-  const userLayers: unknown[] = $layers; // Access the current layers
-  model = tf.sequential(); // Create a new sequential model
+  // Access the current layers
+  const userLayers: unknown[] = $layers; 
+  // Create a new sequential model
+  model = tf.sequential(); 
 
   userLayers.forEach((layer: any, index: number) => {
     const layerConfig: any = { units: parseInt(layer.units), activation: layer.activation };
@@ -61,34 +86,33 @@ function buildModel(): void {
     }
 
     // Add the layer to the model
-    if (model === null){
+    if (model === null) {
       console.error("Model is null");
-      
       return;
     }
-      model.add(tf.layers.dense(layerConfig));
+
+    // Dense is the standard layer, we don't need fancy types
+    model.add(tf.layers.dense(layerConfig));
   });
 
-  // Ensure the last layer outputs a single value with no activation (for regression)
+  // The last layer must have one output as the prediction
   model.add(tf.layers.dense({ units: 1, activation: null }));
-
 }
 
-// Export the TensorFlow.js model
+/**
+ * Exports the model after it is built. Sets flags to indicate the model is ready for training.
+ */
 function exportModel(): void {
   buildModel();
   readyToTrain = true;
   setTimeout(() => {
     secondReady = true; 
   }, 1500);
-
-
 }
 </script>
 
 <!-- Main UI -->
 {#if !secondReady}
-  <!-- content here -->
   <div class="essentialDiv" class:fade-in={!readyToTrain} class:hidden={readyToTrain}>
     <h1 id="pageTitle" style="padding-bottom: 4vh;">Model Builder</h1>
 

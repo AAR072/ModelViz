@@ -1,6 +1,7 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
+// these are all the variables for handling page fade in
 let innerWidth: number = $state(0);
 let titleVisible: boolean = $state(false);
 let subtitleVisible: boolean = $state(false);
@@ -22,22 +23,13 @@ onMount(() => {
   }, 3500 );
 });
 // change the page slowly
-function goToRegression(): void {
+function goToPage(target: string): void {
   titleVisible = false;
   subtitleVisible = false;
   card1Visible = false;
   card2Visible = false;
   setTimeout(() => {
-    goto('/regression');
-  }, 1000);
-}
-function goToClassification(): void {
-  titleVisible = false;
-  subtitleVisible = false;
-  card1Visible = false;
-  card2Visible = false;
-  setTimeout(() => {
-    goto('/classification');
+    goto(`/${target}`);
   }, 1000);
 }
 </script>
@@ -47,7 +39,7 @@ function goToClassification(): void {
   <p id="pageSubtitle" class:fade-in={subtitleVisible} class:hidden={!subtitleVisible}>Choose a problem to visualize</p>
 </div>
 <div class="allCardContainer">
-  <div class="card-container" onclick={goToRegression} role="none">
+  <div class="card-container" onclick={() => {goToPage("regression")}} role="none">
     <div class="card" class:fade-in={card1Visible} class:hidden={!card1Visible}>
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
@@ -94,7 +86,7 @@ function goToClassification(): void {
     </div>
   </div>
   <div class="card-container">
-    <div class="card" class:fade-in={card2Visible} class:hidden={!card2Visible} onclick={goToClassification} role="none">
+    <div class="card" class:fade-in={card2Visible} class:hidden={!card2Visible} onclick={() => {goToPage("classification")}} role="none">
       <svg viewBox="0 0 200 250" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
         <g stroke="lightgrey" stroke-width="0.5">
           <!-- Vertical gridlines -->
