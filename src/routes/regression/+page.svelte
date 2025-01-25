@@ -1,7 +1,8 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import ModelBuilder from '$lib/modelBuilder.svelte';
-let innerWidth: number = $state(0);
+
+// more animation variables
 let titleVisible: boolean = $state(false);
 let subtitleVisible: boolean = $state(false);
 const cards: boolean [] = $state([]);
@@ -10,12 +11,15 @@ let firstDiv: boolean = $state(true);
 let secondDiv: boolean = $state(false);
 let stagesPtr: number = 0;
 let chosenFunction: string = $state("");
-for (let i: number = 0; i < 6; i++) {
+
+// loading all the cards and stages in 
+for (let i: number = 0; i < 3; i++) {
   cards.push(false);
 }
 for (let i: number = 0; i < 3; i++) {
   stages.push(false);
 }
+// load the page in
 onMount(() => {
   setTimeout(() => {
     titleVisible = true;
@@ -44,7 +48,6 @@ function chooseFunction(functionType: string): void {
   }, 1000);
 }
 </script>
-<svelte:window bind:innerWidth />
 {#if firstDiv}
 <div id="firstStage" class:fade-in={stages[0]} class:hidden={!stages[0]}>
 <div class="essentialDiv">

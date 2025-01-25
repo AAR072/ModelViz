@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { KNNApp } from '$lib/svm';  // Path to the KNNApp class (import the class from your updated OOP code)
+  import { KNNApp } from '$lib/svm';  
 
-  let pointCount = $state(100);  // Default point count
-  let chartReady = $state(false);  // Flag to determine when the chart should be rendered
+  let pointCount = $state(100);  
+  let chartReady = $state(false); 
 
   let knnApp: KNNApp;
 
@@ -13,7 +13,7 @@
   // Initialize the KNN app and render on mount
   onMount(() => {
     knnApp = new KNNApp(document.getElementById('chart'));
-    knnApp.run(dataset, pointCount);  // Use the dataset passed from the parent component
+    knnApp.run(dataset, pointCount);
     chartReady = true;
   });
 

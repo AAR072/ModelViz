@@ -1,6 +1,8 @@
 <script lang="ts">
 import { onMount } from 'svelte';
 import SVCBuilder from '$lib/SVCBuilder.svelte';
+
+// fade in stuff
 let innerWidth: number = $state(0);
 let titleVisible: boolean = $state(false);
 let subtitleVisible: boolean = $state(false);
@@ -10,12 +12,13 @@ let firstDiv: boolean = $state(true);
 let secondDiv: boolean = $state(false);
 let stagesPtr: number = 0;
 let chosenFunction: string = $state("");
-for (let index: number = 0; index < 6; index++) {
+for (let index: number = 0; index < 3; index++) {
   cards.push(false);
 }
 for (let index: number = 0; index < 3; index++) {
   stages.push(false);
 }
+// start the page fade in
 onMount(() => {
   setTimeout(() => {
     titleVisible = true;

@@ -1,7 +1,7 @@
 import * as tf from "@tensorflow/tfjs";
 import Chart from "chart.js/auto";
 export class DataGenerator {
-  // static because always only called once
+  // static because we are always only creating the data once
   static createData(functionType: string, maxX: number, minX: number, pointCount: number): [tf.Tensor, tf.Tensor] {
     const xValues: number[] = [];
     const step: number = (maxX - minX) / (pointCount - 1);
