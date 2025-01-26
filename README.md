@@ -25,6 +25,7 @@ There are a plethora of parameters that play with when training an neural networ
     - Snapshot Count
 4. Interactive Visualization
     - View a graph of your model's predictions over time
+    - ![Performance Graph](graph.png)
 5. KNN Viewer
     - For fun, view a scatter plot of a KNN attempting to model a function
 
