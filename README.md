@@ -1,38 +1,35 @@
-# sv
+# ModelViz
+> *A teaching aid to understand neural network training.*
+<hr>
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Elevator Pitch
+*Epochs? Units? Batch Size? Activation?*
+<br>
+There are a plethora of parameters that play with when training an neural network. Students have a hard time understanding the effect of each one. That's why I created **ModelViz**. ModelViz makes it simple to visually see the effects that these parameters have. Students can customize a neural network, change the training parameters, and see the neural network learn over time. With ModelViz, students can understand how each value can affect the performance of a neural network.
 
-## Creating a project
+## Features
+1. Selectable Training Data
+    - Train a neural network on different mathematical functions
+        - `y = sin(x)`
+        - `y = x ^ 2`
+        - `y = 2 ^ x`
+2. Model Creation
+    - Create a model with unlimited layers.
+    - Choose the neuron count.
+    - Select an activation type.
+3. Modifiable Training Parameters
+    - Epochs
+    - Batch Size
+    - Domain of Function
+    - Point Count
+    - Snapshot Count
+4. Interactive Visualization
+    - View a graph of your model's predictions over time
+5. KNN Viewer
+    - For fun, view a scatter plot of a KNN attempting to model a function
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+### Tech Stach
+- Framework: SvelteKit
+- Scripts: TypeScript
+- Styling: Vanilla CSS
+- Deployment: Cloudflare
