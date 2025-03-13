@@ -29,7 +29,7 @@ There are a plethora of parameters that play with when training an neural networ
 5. KNN Viewer
     - For fun, view a scatter plot of a KNN attempting to model a function
 
-### Tech Stach
+### Tech Stack
 - Framework: SvelteKit
 - Scripts: TypeScript
 - Styling: Vanilla CSS
